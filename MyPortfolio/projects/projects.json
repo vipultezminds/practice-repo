@@ -1,0 +1,71 @@
+[
+  {
+    "name": "BuddyCart",
+    "desc": "BuddyCart is an online shopping website that specializes in providing groceries and items for general needs to customers in the local area. The website is designed to provide customers with a hassle-free shopping experience from the comfort of their own homes.",
+    "image": "buddycart",
+    "stacks":"js,html,css,git,netlify,vscode",
+    "links": {
+      "view": "https://dirty-quilt-1530.netlify.app/",
+      "code": "https://github.com/vipullsingh/dirty-quilt-1530"
+    },
+    "highlights" : ["Login Functionality With OTP","Used the JSON-Server to Fetch the data"]
+  },
+  {
+    "name": "CodeVortex AI-Powered Interview Mock App",
+    "desc": "CodeVortex is an AI-powered interview application designed for conducting mock interviews. It offers functionalities such as asking questions to candidates, generating feedback based on their responses, and storing candidate progress and records. ",
+    "image": "CodeVortex",
+    "stacks":"js,html,css,git,netlify,vscode,nodejs,expressjs,tailwind,",
+    "links": {
+      "view": "https://interview-stimulation-app.vercel.app/home",
+      "code": "https://github.com/vipullsingh/CodeVortex"
+    },
+    "highlights" : ["AI-powered mock interview application with question asking, feedback generation, and progress tracking.","Utilizes OpenAI API for AI capabilities"]
+  },
+  {
+    "name": "HealCare",
+    "desc": "HealCare is an appointment booking system website where patients can easily book appointments with doctors.",
+    "image": "HealCare",
+    "stacks": "HTML, CSS, JavaScript, Bootstrap, Node.js, Express.js, JSON Web Token (JWT), MongoDB, Sequelize, OAuth",
+    "links": {
+    "view": "https://exquisite-faloodeh-847e5b.netlify.app/",
+    "code": "https://github.com/vipullsingh/HealCare"
+    },
+    "highlights": [
+    "Allows patients to book appointments with doctors",
+    "Integrates OAuth for seamless user authentication"
+    ]
+    },
+  {
+    "name": "Brief.ly",
+    "desc": "This portfolio showcases a web application project that offers link shortening, detailed analytics, and QR code generation. ",
+    "image": "briefly",
+    "stacks":"html,css,js,bootstrap,tailwind,nodejs,expressjs,redis,netlify",
+    "links": {
+      "view": "https://lacking-berry-1088.netlify.app/",
+      "code": "https://github.com/vipullsingh/briefly2.O"
+    },
+    "highlights" : ["Shorten URLs and convert link to QR ","Create custom QR codes for custom payments",""]
+  },
+  {
+    "name": "ShoeKeeper",
+    "desc": "ShoeKeeper is an online shopping website that specializes in providing a wide range of shoes to customers around the world. The website is designed with a user-friendly interface that allows customers to easily browse and purchase their desired footwear.",
+    "image": "shoekeeper",
+     "stacks":"js,html,css,git,netlify,vscode",
+    "links": {
+      "view": "https://shoekeepermasai.netlify.app/",
+      "code": "https://github.com/vipullsingh/ShoeKeeper"
+    },
+        "highlights" : ["On Landing page, product detail cards data Fetch through API.","Product Page with Filter by Product , Sort by Price"]
+  },
+  {
+    "name": "CosmetiCare",
+    "desc": "CosmetiCare is an Indian online marketplace for beauty and wellness products. It offers a wide range of skincare, haircare, makeup, and personal care products from various brands.",
+    "image": "cosmeticare",
+     "stacks":"js,html,css,git,netlify,vscode",
+    "links": {
+      "view": "https://busy-channel-5933.netlify.app/",
+      "code": "https://github.com/vipullsingh/busy-channel-5933"
+    },
+        "highlights" : ["On Landing page, product detail cards data Fetch through API.","Product Page with Filter by Product , Sort by Price"]
+  }
+]

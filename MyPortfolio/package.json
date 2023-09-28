@@ -1,0 +1,15 @@
+{
+  "name": "vipul-portfolio",
+  "version": "1.0.0",
+  "description": "<a href=\"https://vipullsingh.github.io/\" target=\"_blank\">**Visit Now** 🌐🖇️</a>",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "github-calendar": "^2.3.2"
+  }
+}

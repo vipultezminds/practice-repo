@@ -1,0 +1,34 @@
+[
+    {
+        "name": "Git",
+        "icon": "git.png"
+    },
+    {
+        "name": "Netlify",
+        "icon": "netlify.png"
+    },
+    {
+        "name": "VS Code",
+        "icon": "vscode.png"
+    },
+      {
+        "name": "GitHub",
+        "icon": "github.png"
+    },
+      {
+        "name": "Replit",
+        "icon": "replit.png"
+    },
+    {
+        "name": "Postman",
+        "icon": "postman.png"
+    },
+    {
+        "name": "MongoDB Compass",
+        "icon": "compass.png"
+    },
+    {
+   "name": "AWS",
+   "icon": "aws.png"
+}
+]

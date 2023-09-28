@@ -1,0 +1,48 @@
+[
+    {
+        "name": "HTML",
+        "icon": "html.png"
+    },
+    {
+        "name": "CSS",
+        "icon": "css.png"
+    },
+    {
+        "name": "JavaScipt",
+        "icon": "js.png"
+    },
+    {
+        "name": "Node JS",
+        "icon": "nodejs.png"
+    },
+         {
+        "name": "My SQL",
+        "icon": "mysql.png"
+    },
+         {
+        "name": "DSA",
+        "icon": "dsa.png"
+    },
+         {
+        "name": "MongoDB",
+        "icon": "mongo.png"
+    },
+        {
+   "name": "Express",
+   "icon": "express.png"
+    },
+    {
+   "name": "React",
+   "icon": "react.png"
+}
+,
+    {
+   "name": "Redis",
+   "icon": "redis.png"
+},
+{
+"name": "Socket.io",
+"icon": "socketio.png"
+}
+    
+]
