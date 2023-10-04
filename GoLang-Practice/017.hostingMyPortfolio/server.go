@@ -22,8 +22,12 @@ func main() {
 
     mux.HandleFunc("/", handler)
 
-    fmt.Println("Server is listening on :8080...")
-    http.ListenAndServe(":8080", mux)
+    fmt.Println("Server requested on port on :8080...")
+    err := http.ListenAndServe(":8080", mux)
+    if err!=nil{
+        panic(err)
+    }
+    
 }
 
 
