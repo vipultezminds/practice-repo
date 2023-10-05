@@ -94,7 +94,7 @@ func updateItem(w http.ResponseWriter, r *http.Request) {
 	_ = json.NewDecoder(r.Body).Decode(&updatedItem)
 	for index, item := range items {
 		if item.ID == id {
-			updatedItem.ID = item.ID // Preserve the original ID
+			updatedItem.ID = item.ID 
 			items[index] = updatedItem
 			saveDataToDB()
 			json.NewEncoder(w).Encode(updatedItem)
