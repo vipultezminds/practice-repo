@@ -14,7 +14,6 @@ func main() {
 
 	conn, err := net.Dial("tcp", serverAddr)
 	if err != nil {
-
 		panic(err)
 	}
 	defer conn.Close()
@@ -24,6 +23,9 @@ func main() {
 	username = strings.TrimSpace(username)
 
 	go receiveMessages(conn)
+
+	// Request chat history when a client connects
+	conn.Write([]byte("/history"))
 
 	for {
 		message, _ := bufio.NewReader(os.Stdin).ReadString('\n')

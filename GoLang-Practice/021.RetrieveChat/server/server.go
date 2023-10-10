@@ -12,7 +12,7 @@ var clients = make(map[net.Conn]bool)
 
 func main() {
 	port := "8080"
-	listener, err := net.Listen("tcp", ":"+port)  //Server creation on port 8080
+	listener, err := net.Listen("tcp", ":"+port) //Server creation on port 8080
 	if err != nil {
 		panic(err)
 	}
@@ -25,7 +25,7 @@ func main() {
 			fmt.Println(err)
 			continue
 		}
-		clients[conn] = true // storing connections in clients slice
+		clients[conn] = true  // storing connections in clients slice
 		go handleClient(conn) // handling multiple clients
 	}
 }
@@ -43,7 +43,7 @@ func handleClient(conn net.Conn) {
 	}
 	defer file.Close()
 
-	_, err2 := file.WriteString(fmt.Sprintf("[%s] Client %s connected.\n", time.Now().Format(time.RFC3339), clientAddr)) // writing 
+	_, err2 := file.WriteString(fmt.Sprintf("[%s] Client %s connected.\n", time.Now().Format(time.RFC3339), clientAddr)) // writing
 	if err2 != nil {
 		fmt.Println("Could not write text to saveChat.txt")
 	} else {
