@@ -24,9 +24,6 @@ func main() {
 
 	go receiveMessages(conn)
 
-	// Request chat history when a client connects
-	conn.Write([]byte("/history"))
-
 	for {
 		message, _ := bufio.NewReader(os.Stdin).ReadString('\n')
 		message = strings.TrimSpace(message)
@@ -52,4 +49,13 @@ func receiveMessages(conn net.Conn) {
 		}
 		fmt.Println(string(message[:n]))
 	}
+}
+
+func getChatHistory(conn net.Conn)string{
+	history := make([]byte,1024)
+	n,err:= conn.Read(history)
+	if err != nil {
+		panic(err)
+	}
+	return string(history[:n])
 }
