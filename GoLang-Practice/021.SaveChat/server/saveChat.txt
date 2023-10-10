@@ -1,44 +1,14 @@
-[2023-10-10T10:34:31+05:30] Client 127.0.0.1:43166 connected.
-[2023-10-10T10:35:05+05:30] Client 127.0.0.1:41854 connected.
-[2023-10-10T10:35:13+05:30] 127.0.0.1:41854: Kaushal: Hi
-[2023-10-10T10:35:18+05:30] 127.0.0.1:43166: Vipul: Hi Kaushal
-[2023-10-10T10:38:46+05:30] Client 192.168.1.19:46366 connected.
-[2023-10-10T10:39:02+05:30] 192.168.1.19:46366: kaushal: hey vipul
-[2023-10-10T10:39:09+05:30] 192.168.1.19:46366: kaushal: hello
-[2023-10-10T10:39:14+05:30] Client 127.0.0.1:41854 disconnected.
-[2023-10-10T10:39:25+05:30] 127.0.0.1:43166: Vipul: Oh yeah this is working fine
-[2023-10-10T10:39:35+05:30] 192.168.1.19:46366: kaushal: yes hurrrehh
-[2023-10-10T10:42:07+05:30] Client 127.0.0.1:43166 disconnected.
-[2023-10-10T11:06:03+05:30] Client 192.168.1.19:36828 connected.
-[2023-10-10T11:06:07+05:30] 192.168.1.19:36828: kaushal: hey
-[2023-10-10T11:06:29+05:30] Client 127.0.0.1:58780 connected.
-[2023-10-10T11:06:35+05:30] 127.0.0.1:58780: Vipul: sdgfsg
-[2023-10-10T11:06:35+05:30] 127.0.0.1:58780: Vipul:
-[2023-10-10T11:06:36+05:30] 127.0.0.1:58780: Vipul: asdfgs
-[2023-10-10T11:06:37+05:30] 127.0.0.1:58780: Vipul: sdfgsdfg
-[2023-10-10T11:06:38+05:30] 127.0.0.1:58780: Vipul: dsfg
-[2023-10-10T11:06:38+05:30] 127.0.0.1:58780: Vipul: sdfg
-[2023-10-10T11:06:38+05:30] 127.0.0.1:58780: Vipul: sdfg
-[2023-10-10T11:06:38+05:30] 127.0.0.1:58780: Vipul: dfgdf
-[2023-10-10T11:06:40+05:30] 192.168.1.19:36828: kaushal: skuladsfldf
-[2023-10-10T11:06:40+05:30] 192.168.1.19:36828: kaushal: hAGKL
-[2023-10-10T11:06:41+05:30] 127.0.0.1:58780: Vipul: sdfg
-[2023-10-10T11:06:41+05:30] 127.0.0.1:58780: Vipul: dsg
-[2023-10-10T11:12:39+05:30] Client 192.168.1.41:42618 connected.
-[2023-10-10T11:12:45+05:30] 192.168.1.41:42618: shubham: helloooo
-[2023-10-10T11:12:51+05:30] 192.168.1.19:36828: kaushal: gjakhsjldk
-[2023-10-10T11:13:00+05:30] 192.168.1.19:36828: kaushal: sdsn,m.
-[2023-10-10T11:13:15+05:30] 127.0.0.1:58780: Vipul: adasfasdf
-[2023-10-10T11:13:15+05:30] 127.0.0.1:58780: Vipul: asf
-[2023-10-10T11:13:15+05:30] 127.0.0.1:58780: Vipul: as
-[2023-10-10T11:13:15+05:30] 127.0.0.1:58780: Vipul: df
-[2023-10-10T11:13:16+05:30] 127.0.0.1:58780: Vipul: asdf
-[2023-10-10T11:13:16+05:30] 127.0.0.1:58780: Vipul: as
-[2023-10-10T11:13:16+05:30] 127.0.0.1:58780: Vipul: df
-[2023-10-10T11:13:17+05:30] 192.168.1.19:36828: kaushal: hAGKSJ;L
-[2023-10-10T11:13:26+05:30] 192.168.1.41:42618: shubham: efafhj
-[2023-10-10T11:17:00+05:30] Client 192.168.1.41:42618 disconnected.
-[2023-10-10T11:17:17+05:30] Client 192.168.1.41:53024 connected.
-[2023-10-10T11:17:22+05:30] 192.168.1.41:53024: shubham: helloo
-[2023-10-10T11:17:30+05:30] 192.168.1.19:36828: kaushal: sfdghgkjlk
-[2023-10-10T11:20:44+05:30] Client 192.168.1.19:36828 disconnected.
+    when running client, 
+it should ask are you a new user or existing,,
+
+if new user, store his username with his IP,
+
+if existing, then ask for username only,,
+
+after that ask,, chat with individual or group,,
+
+if individual ask for username he want to chat with,,
+
+and retieve all chats in terminal with that existing user if present.
+
+if group chat,, connect it with group chat
