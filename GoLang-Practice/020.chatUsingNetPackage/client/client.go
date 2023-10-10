@@ -1,5 +1,3 @@
-
-// Client
 package main
 
 import (
