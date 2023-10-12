@@ -39,3 +39,5 @@ Implement the chatWithUsers function.
     a. Allow the user to type messages to send to the server.
     b. Send messages to the server in the format "username: message."
     c. Allow the user to type "/exit" to exit the chat.
+    
+    go run client.go

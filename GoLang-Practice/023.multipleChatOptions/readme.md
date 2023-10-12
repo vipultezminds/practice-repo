@@ -12,8 +12,6 @@ A simple server-client chat application written in Go. This application allows c
 - [Server](#server)
 - [Client](#client)
 - [Sample Usage](#sample-usage)
-- [Contributing](#contributing)
-- [License](#license)
 
 ## Features
 
@@ -33,31 +31,24 @@ Before running the application, make sure you have the following installed:
 
 ### Server
 
-1. Clone the repository or download the source code:
+1. Go to repository or download the source code:
 
     ```bash
-    git clone https://github.com/yourusername/server-client-chat.git
-    ```
+     https://github.com/vipultezminds/practice-repo/tree/main/GoLang-Practice/023.multipleChatOptions
 
-2. Navigate to the `server-client-chat` directory:
-
-    ```bash
-    cd server-client-chat
-    ```
-
-3. Compile and run the server:
+2. Compile and run the server:
 
     ```bash
     go run server.go
     ```
 
-4. The server will start and listen for client connections on port 8080 by default.
+3. The server will start and listen for client connections on port 8080 by default.
 
 ### Client
 
 1. Open a new terminal or command prompt.
 
-2. Navigate to the `server-client-chat` directory (if not already there).
+2. Navigate to the `client` directory (if not already there).
 
 3. Compile and run the client:
 
