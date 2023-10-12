@@ -13,26 +13,28 @@ var clients = make(map[net.Conn]bool)
 var chatData = make(map[string][]map[string]string)
 
 func main() {
-	port := "8080"
-	listener, err := net.Listen("tcp", ":"+port)
-	if err != nil {
-		panic(err)
-	}
-	defer listener.Close()
-	fmt.Printf("Chat server running on port %s...\n", port)
+    port := "8080"
+    listener, err := net.Listen("tcp", ":"+port)
+    if err != nil {
+        panic(err)
+    }
+    defer listener.Close()
+    fmt.Printf("Chat server running on port %s...\n", port)
 
-	// Load chat history from file
-	loadChatHistory()
+    // Load chat history from file
+    loadChatHistory()
 
-	for {
-		conn, err := listener.Accept()
-		if err != nil {
-			fmt.Println(err)
-			continue
-		}
-		go handleClient(conn)
-	}
+    for {
+        conn, err := listener.Accept()
+        if err != nil {
+            fmt.Println(err)
+            continue
+        }
+        clients[conn] = true // Register the client
+        go handleClient(conn)
+    }
 }
+
 
 func loadChatHistory() {
 	file, err := os.Open("saveChat.json")
@@ -75,27 +77,11 @@ func handleClient(conn net.Conn) {
 
 		timestampedMsg := fmt.Sprintf("[%s] %s: %s", time.Now().Format(time.RFC3339), username, messageText)
 
-		// Save to saveChat.txt
-		if err := saveToTextFile(timestampedMsg); err != nil {
-			fmt.Println("Could not write text to saveChat.txt")
-		}
-
 		// Save to saveChat.json
 		saveToJSON(username, messageText)
 
 		broadcast(timestampedMsg)
 	}
-}
-
-func saveToTextFile(message string) error {
-	file, err := os.OpenFile("saveChat.txt", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
-	if err != nil {
-		return err
-	}
-	defer file.Close()
-
-	_, err = file.WriteString(message + "\n")
-	return err
 }
 
 func saveToJSON(username, message string) {

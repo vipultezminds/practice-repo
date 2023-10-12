@@ -1,187 +1,48 @@
 package main
 
 import (
-	"bufio"
 	"fmt"
-	"log"
 	"net"
 	"os"
-	"strings"
+	"bufio"
 )
 
 func main() {
-	serverAddr := "localhost:8080"
+	fmt.Println("Chat client started.")
 
-	conn, err := net.Dial("tcp", serverAddr)
+	// Connect to the server
+	conn, err := net.Dial("tcp", "localhost:8080") // Replace with the server's address
 	if err != nil {
-		panic(err)
+		fmt.Println("Error connecting to the server:", err)
+		os.Exit(1)
 	}
 	defer conn.Close()
 
-	var username string
+	// Ask the user for a username
+	fmt.Print("Enter your username: ")
+	username, _ := bufio.NewReader(os.Stdin).ReadString('\n')
+	username = username[:len(username)-1] // Remove the newline character
 
+	// Start a goroutine to read messages from the server
+	go readMessages(conn)
+
+	// Read and send user input to the server
 	for {
-		fmt.Println("Choose an option:")
-		fmt.Println("1. View your chat history")
-		fmt.Println("2. Chat with connected users")
-		fmt.Println("3. Retrieve all unique users")
-		fmt.Print("Enter the option number: ")
-		var choice int
-		_, err := fmt.Scanln(&choice)
-		if err != nil {
-			fmt.Println("Error reading choice:", err)
-			return
-		}
-
-		switch choice {
-		case 1:
-			fmt.Print("Enter your username: ")
-			_, err := fmt.Scanln(&username)
-			if err != nil {
-				fmt.Println("Error reading username:", err)
-				return
-			}
-			viewChatHistory(username)
-		case 2:
-			fmt.Print("Enter your username: ")
-			_, err := fmt.Scanln(&username)
-			if err != nil {
-				fmt.Println("Error reading username:", err)
-				return
-			}
-			go receiveMessages(conn)
-			chatWithUsers(conn, username)
-		case 3:
-			retrieveUniqueUsers()
-		default:
-			fmt.Println("Invalid choice. Please enter 1, 2, or 3.")
-		}
+		reader := bufio.NewReader(os.Stdin) // Declare reader here
+		message, _ := reader.ReadString('\n')
+		message = message[:len(message)-1] // Remove the newline character
+		fullMessage := username + ": " + message
+		fmt.Fprint(conn, fullMessage + "\n")
 	}
 }
 
-func receiveMessages(conn net.Conn) {
-	historyFile, err := os.Create("clientChatHistory.txt")
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer historyFile.Close()
-
+func readMessages(conn net.Conn) {
 	for {
-		message := make([]byte, 1024)
-		n, err := conn.Read(message)
+		message, err := bufio.NewReader(conn).ReadString('\n')
 		if err != nil {
-			panic(err)
+			fmt.Println("Connection to the server has been closed.")
+			os.Exit(1)
 		}
-
-		// Print the received message to the console
-		fmt.Println(message)
-
-		// Write the received message to the client's chat history file
-		_, err = historyFile.Write(message[:n])
-		if err != nil {
-			log.Fatal(err)
-		}
-	}
-}
-
-func viewChatHistory(username string) {
-	// Open the file
-	file, err := os.Open("clientChatHistory.txt")
-	if err != nil {
-		fmt.Println("Error opening file:", err)
-		return
-	}
-	defer file.Close()
-
-	// Create a slice to store the lines related to the input username
-	var userLines []string
-
-	// Read each line from the file
-	scanner := bufio.NewScanner(file)
-	for scanner.Scan() {
-		line := scanner.Text()
-
-		// Check if the line contains "connected" or "disconnected"
-		if strings.Contains(line, "connected") || strings.Contains(line, "disconnected") {
-			continue // Skip lines with "connected" or "disconnected"
-		}
-
-		// Split the line by ":" and retrieve the username
-		parts := strings.Split(line, " ")
-		if len(parts) >= 4 {
-			raw := strings.TrimSpace(parts[2])
-			chatUsername := strings.Split(raw, ":")[0]
-
-			// Check if the username matches the input username (case-sensitive)
-			if chatUsername == username {
-				userLines = append(userLines, line)
-			}
-		}
-	}
-
-	if err := scanner.Err(); err != nil {
-		fmt.Println("Error reading file:", err)
-		return
-	}
-
-	// Print the retrieved lines related to the input username
-	fmt.Println("Lines related to", username, ":")
-	for _, userLine := range userLines {
-		fmt.Println(userLine)
-	}
-}
-
-func retrieveUniqueUsers() {
-	file, err := os.Open("clientChatHistory.txt")
-	if err != nil {
-		fmt.Println("Error opening file:", err)
-		return
-	}
-	defer file.Close()
-
-	uniqueUsers := make(map[string]bool)
-
-	scanner := bufio.NewScanner(file)
-	for scanner.Scan() {
-		line := scanner.Text()
-		parts := strings.Split(line, " ")
-
-		// Check if the line contains "connected" or "disconnected"
-		if strings.Contains(line, "connected") || strings.Contains(line, "disconnected") {
-			continue // Skip lines with "connected" or "disconnected"
-		}
-
-		if len(parts) >= 4 {
-			raw := strings.TrimSpace(parts[2])
-			chatUsername := strings.Split(raw, ":")[0]
-			uniqueUsers[chatUsername] = true
-		}
-	}
-
-	if err := scanner.Err(); err != nil {
-		fmt.Println("Error reading file:", err)
-		return
-	}
-
-	fmt.Println("Unique users in chat history:")
-	for user := range uniqueUsers {
-		fmt.Println(user)
-	}
-}
-
-func chatWithUsers(conn net.Conn, username string) {
-	for {
-		message, _ := bufio.NewReader(os.Stdin).ReadString('\n')
-		message = strings.TrimSpace(message)
-
-		if message == "/exit" {
-			return
-		}
-
-		msg := username + ":" + message
-		_, err := conn.Write([]byte(msg))
-		if err != nil {
-			log.Fatal(err)
-		}
+		fmt.Print(message)
 	}
 }
