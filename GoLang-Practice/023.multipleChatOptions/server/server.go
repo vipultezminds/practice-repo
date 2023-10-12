@@ -1,7 +1,7 @@
 package main
 
 import (
-	"bufio"
+	"encoding/json"
 	"fmt"
 	"net"
 	"os"
@@ -10,11 +10,11 @@ import (
 )
 
 var clients = make(map[net.Conn]bool)
-var chatHistory []string
+var chatData = make(map[string][]map[string]string)
 
 func main() {
 	port := "8080"
-	listener, err := net.Listen("tcp", ":"+port) // Server creation on port 8080
+	listener, err := net.Listen("tcp", ":"+port)
 	if err != nil {
 		panic(err)
 	}
@@ -25,81 +25,109 @@ func main() {
 	loadChatHistory()
 
 	for {
-		conn, err := listener.Accept() // Accepting clients
+		conn, err := listener.Accept()
 		if err != nil {
 			fmt.Println(err)
 			continue
 		}
-		clients[conn] = true  // Storing connections in clients slice
-		go handleClient(conn) // Handling multiple clients
+		go handleClient(conn)
 	}
 }
 
 func loadChatHistory() {
-	file, err := os.Open("saveChat.txt")
+	file, err := os.Open("saveChat.json")
 	if err != nil {
-		fmt.Println("Could not open saveChat.txt")
+		fmt.Println("Could not open saveChat.json")
 		return
 	}
 	defer file.Close()
 
-	scanner := bufio.NewScanner(file)
-	for scanner.Scan() {
-		msg := scanner.Text()
-		chatHistory = append(chatHistory, msg)
+	decoder := json.NewDecoder(file)
+	if err := decoder.Decode(&chatData); err != nil {
+		fmt.Println("Error decoding saveChat.json:", err)
 	}
 }
 
 func handleClient(conn net.Conn) {
 	defer conn.Close()
 
-	clientAddr := conn.RemoteAddr().String() // Storing client address in clientAddr variable
+	clientAddr := conn.RemoteAddr().String()
 	fmt.Printf("Client %s connected.\n", clientAddr)
-
-	file, err := os.OpenFile("saveChat.txt", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
-	if err != nil {
-		fmt.Println("Could not open saveChat.txt")
-		return
-	}
-	defer file.Close()
-
-	_, err2 := file.WriteString(fmt.Sprintf("[%s] Client %s connected.\n", time.Now().Format(time.RFC3339), clientAddr)) // Writing
-	if err2 != nil {
-		fmt.Println("Could not write text to saveChat.txt")
-	} else {
-		fmt.Println("Operation successful! Text has been appended to saveChat.txt")
-	}
-
-	for _, msg := range chatHistory {
-		conn.Write([]byte(msg + "\n")) // Send chat history to the connected client
-	}
 
 	for {
 		message := make([]byte, 1024)
 		n, err := conn.Read(message)
 		if err != nil {
 			fmt.Printf("Client %s disconnected.\n", clientAddr)
-			_, err := file.WriteString(fmt.Sprintf("[%s] Client %s disconnected.\n", time.Now().Format(time.RFC3339), clientAddr))
-			if err != nil {
-				fmt.Println("Could not write text to saveChat.txt")
-			}
 			delete(clients, conn)
 			return
 		}
+
 		msg := strings.TrimSpace(string(message[:n]))
-		timestampedMsg := fmt.Sprintf("[%s] %s: %s\n", time.Now().Format(time.RFC3339), clientAddr, msg)
-		fmt.Print(timestampedMsg)
-		_, err = file.WriteString(timestampedMsg)
-		if err != nil {
+		parts := strings.SplitN(msg, ":", 2)
+		if len(parts) != 2 {
+			fmt.Println("Invalid message format")
+			continue
+		}
+
+		username := parts[0]
+		messageText := parts[1]
+
+		timestampedMsg := fmt.Sprintf("[%s] %s: %s", time.Now().Format(time.RFC3339), username, messageText)
+
+		// Save to saveChat.txt
+		if err := saveToTextFile(timestampedMsg); err != nil {
 			fmt.Println("Could not write text to saveChat.txt")
 		}
-		broadcast(msg)
+
+		// Save to saveChat.json
+		saveToJSON(username, messageText)
+
+		broadcast(timestampedMsg)
+	}
+}
+
+func saveToTextFile(message string) error {
+	file, err := os.OpenFile("saveChat.txt", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+	if err != nil {
+		return err
+	}
+	defer file.Close()
+
+	_, err = file.WriteString(message + "\n")
+	return err
+}
+
+func saveToJSON(username, message string) {
+	if _, exists := chatData[username]; !exists {
+		chatData[username] = []map[string]string{}
+	}
+	chatData[username] = append(chatData[username], map[string]string{
+		"time":    time.Now().Format(time.RFC3339),
+		"message": message,
+	})
+
+	saveChatHistory()
+}
+
+func saveChatHistory() {
+	file, err := os.Create("saveChat.json")
+	if err != nil {
+		fmt.Println("Could not create saveChat.json")
+		return
+	}
+	defer file.Close()
+
+	encoder := json.NewEncoder(file)
+	if err := encoder.Encode(chatData); err != nil {
+		fmt.Println("Error encoding saveChat.json:", err)
 	}
 }
 
 func broadcast(message string) {
+	fmt.Println(message)
 	for conn := range clients {
-		_, err := conn.Write([]byte(message))
+		_, err := conn.Write([]byte(message + "\n"))
 		if err != nil {
 			fmt.Println(err)
 			conn.Close()
@@ -107,4 +135,3 @@ func broadcast(message string) {
 		}
 	}
 }
-
