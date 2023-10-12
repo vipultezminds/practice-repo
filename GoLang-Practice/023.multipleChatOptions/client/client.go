@@ -1,10 +1,10 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
 	"net"
 	"os"
-	"bufio"
 )
 
 func main() {
@@ -32,7 +32,7 @@ func main() {
 		message, _ := reader.ReadString('\n')
 		message = message[:len(message)-1] // Remove the newline character
 		fullMessage := username + ": " + message
-		fmt.Fprint(conn, fullMessage + "\n")
+		fmt.Fprint(conn, fullMessage+"\n")
 	}
 }
 

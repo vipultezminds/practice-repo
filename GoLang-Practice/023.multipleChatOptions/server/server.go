@@ -13,40 +13,23 @@ var clients = make(map[net.Conn]bool)
 var chatData = make(map[string][]map[string]string)
 
 func main() {
-    port := "8080"
-    listener, err := net.Listen("tcp", ":"+port)
-    if err != nil {
-        panic(err)
-    }
-    defer listener.Close()
-    fmt.Printf("Chat server running on port %s...\n", port)
-
-    // Load chat history from file
-    loadChatHistory()
-
-    for {
-        conn, err := listener.Accept()
-        if err != nil {
-            fmt.Println(err)
-            continue
-        }
-        clients[conn] = true // Register the client
-        go handleClient(conn)
-    }
-}
-
-
-func loadChatHistory() {
-	file, err := os.Open("saveChat.json")
+	port := "8080"
+	listener, err := net.Listen("tcp", ":"+port)
 	if err != nil {
-		fmt.Println("Could not open saveChat.json")
-		return
+		panic(err)
 	}
-	defer file.Close()
+	defer listener.Close()
+	fmt.Printf("Chat server running on port %s...\n", port)
 
-	decoder := json.NewDecoder(file)
-	if err := decoder.Decode(&chatData); err != nil {
-		fmt.Println("Error decoding saveChat.json:", err)
+	for {
+		conn, err := listener.Accept()
+		if err != nil {
+			fmt.Println(err)
+			continue
+		}
+		clients[conn] = true // Register the client
+
+		go handleClient(conn)
 	}
 }
 
