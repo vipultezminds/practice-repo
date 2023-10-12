@@ -87,14 +87,3 @@ Before running the application, make sure you have the following installed:
 
 4. You can view chat history, chat with other connected users, or retrieve unique user names.
 
-## Contributing
-
-Contributions are welcome! If you'd like to enhance the functionality or fix issues, please fork the repository and submit a pull request.
-
-## License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
----
-
-Feel free to customize this README with more specific details about your project, including installation instructions, advanced usage, and any additional features or improvements you make.

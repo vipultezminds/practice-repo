@@ -1,0 +1,41 @@
+server.go
+Import necessary packages and define global variables.
+Create the main function.
+Set the server port (e.g., 8080) and start listening for incoming connections on that port.
+Load chat history from a file, if available.
+
+Enter an infinite loop to accept and handle incoming client connections.
+    a. When a client connects, store their connection and address in the clients map.
+    b. Create a new goroutine to handle communication with the connected client.
+Implement the loadChatHistory function.
+    a. Open the chat history file.
+    b. Read each line from the file and append it to the chatHistory slice.
+Implement the handleClient function for each connected client.
+    a. Get the client's address and print that they've connected.
+    b. Open the chat history file for writing and append a message about the client's connection.
+    c. Send the chat history to the connected client.
+    d. Enter a loop to receive and broadcast messages from the client.
+    e. When a client disconnects, print a message and log it in the chat history file.
+
+
+
+client.go
+Import necessary packages.
+Create the main function for the client.
+Define the server address (e.g., "localhost:8080") and establish a connection to the server.
+
+Create a loop to present a menu of options.
+    a. Allow the user to choose between viewing chat history, chatting with users, or retrieving unique users.
+Implement the receiveMessages goroutine.
+    a. Create a chat history file for the client.
+    b. Continuously read and print messages received from the server and write them to the client's chat history file.
+Implement the viewChatHistory function.
+    a. Open the client's chat history file.
+    b. Parse the file to find chat lines related to the user and print them.
+Implement the retrieveUniqueUsers function.
+    a. Open the client's chat history file.
+    b. Extract unique usernames mentioned in the chat history and print them.
+Implement the chatWithUsers function.
+    a. Allow the user to type messages to send to the server.
+    b. Send messages to the server in the format "username: message."
+    c. Allow the user to type "/exit" to exit the chat.
