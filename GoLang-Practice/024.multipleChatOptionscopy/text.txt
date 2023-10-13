@@ -1,0 +1,151 @@
+  Start
+    |
+    V
+  Initialize Server (Port 8080)
+    |
+    V
+  Load Chat History
+    |
+    V
+  ┌-----------------------------┐
+  |                           |
+  |       Accept Clients      |
+  |                           |
+  |   ┌---------┐  New Client  |
+  |   |         |   Connected  |
+  |   |   New   |-------------->|
+  |   |  Client |              |
+  |   |   Conn  |              |
+  |   |   Added |              |
+  |   |         |              |
+  |   └----|----┘              |
+  |        |                   |
+  |        V                   |
+  |    ┌-----------┐            |
+  |    |           |            |
+  |    | Handle    |            |
+  |    |   Client  |            |
+  |    |   Messages|            |
+  |    |           |            |
+  |    └--|--|--|--┘            |
+  |        |  |  |              |
+  |        V  |  V              |
+  |     Send Chat History       |
+  |        |  |  |              |
+  |        V  |  V              |
+  |  ┌-----|-------|-----┐     |
+  |  |                 |     |
+  |  |   Receive &     |     |
+  |  |   Broadcast      |     |
+  |  |   Messages       |     |
+  |  |                 |     |
+  |  └--|--|--|--|--|--┘     |
+  |        |  |  |           |
+  |        V  |  V           |
+  |     Client Disconnected  |
+  |        |  |  |           |
+  |        V  |  V           |
+  |    ┌-------|-----------┐ |
+  |    |                 | |
+  |    | Log Disconnection| |
+  |    |   in Chat History| |
+  |    |                 | |
+  |    └--|--|--|--|--|--┘ |
+  |        |  |  |           |
+  |        V  |  V           |
+  |   Loop for Next Client   |
+  |        |  |  |           |
+  |        V  |  V           |
+  └--------|---|-------------┘
+
+
+
+
+
+
+
+client
+
+  Start
+    |
+    V
+  Connect to Server
+    |
+    V
+  Display Menu Options
+    |
+    V
+  ┌-----------------------------┐
+  |                           |
+  |    Choose an Option      |
+  |                           |
+  |    ┌--|---|---|          |
+  |    |  |   |   |          |
+  |    |  V   V   V          |
+  |    | View Chat  |         |
+  |    | History    |         |
+  |    |            |         |
+  |    └--|---|---|          |
+  |    |  |   |   |          |
+  |    |  V   V   V          |
+  |    | Chat with  |         |
+  |    | Connected  |         |
+  |    | Users      |         |
+  |    |            |         |
+  |    └--|---|---|          |
+  |    |  |   |   |          |
+  |    |  V   V   V          |
+  |    | Retrieve   |         |
+  |    | Unique     |         |
+  |    | Users      |         |
+  |    |            |         |
+  |    └--|---|---|          |
+  |    |  |   |   |          |
+  |    |  V   V   V          |
+  |    | Exit Chat  |         |
+  |    |            |         |
+  |    └--------------|------┘ |
+  |    |               |      |
+  |    V               V      |
+  |  View Chat     Chat with  |
+  |  History       Connected  |
+  |    |            Users    |
+  |    V               |      |
+  | Display Chat     Create   |
+  |   History        Goroutine|
+  |    |            for       |
+  |    V            Receiving |
+  |    |            Messages |
+  |    |               |      |
+  |    |               V      |
+  |    |            Send      |
+  |    |            Messages  |
+  |    |               |      |
+  |    |               V      |
+  |    |            Input     |
+  |    |               |      |
+  |    |               V      |
+  |    |            /exit     |
+  |    |               |      |
+  |    └---------------|------┘
+  |                   |
+  |    ┌--|---|---|  |
+  |    |  |   |   |  |
+  |    |  V   V   V  |
+  |    | View Chat  | |
+  |    | History    | |
+  |    |            | |
+  |    └--|---|---|  |
+  |    |  |   |   |  |
+  |    |  V   V   V  |
+  |    | Retrieve   | |
+  |    | Unique     | |
+  |    | Users      | |
+  |    |            | |
+  |    └--|---|---|  |
+  |    |  |   |   |  |
+  |    |  V   V   V  |
+  |    | Exit Chat  | |
+  |    |            | |
+  |    └--------------┘
+  └-----------------|
