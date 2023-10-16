@@ -2,10 +2,19 @@ package main
 
 import (
 	"bufio"
+	"encoding/json"
 	"fmt"
 	"net"
 	"os"
+	"strings"
 )
+
+type UserInfo struct {
+	Fullname       string `json:"fullname"`
+	Bio            string `json:"bio"`
+	Role           string `json:"role"`
+	SignupDateTime string `json:"signupDateTime"`
+}
 
 func main() {
 	fmt.Println("Chat client started.")
@@ -20,20 +29,21 @@ func main() {
 
 	reader := bufio.NewReader(os.Stdin)
 
-	fmt.Print("Enter your username: ")
-	username, _ := reader.ReadString('\n')
-	username = username[:len(username)-1] // Remove the newline character
-
-	fmt.Println("Welcome, " + username + "!")
-
 	for {
-		fmt.Print("Choose an option (1 for Signup, 2 for Login, 3 to Quit): ")
+		fmt.Print("Choose an option:\n1.Signup\n2.Login\n3.RetrieveAllChat History\n")
+		fmt.Println("4.Retrieve All Chat by a User.")
+		fmt.Println("5.Retrieve User Info.")
+		fmt.Println("6.User IsActive or LastSeen")
+		fmt.Print("Enter Your Choice : ")
 		option, _ := reader.ReadString('\n')
 		option = option[:len(option)-1] // Remove the newline character
 
 		switch option {
 		case "1":
 			// Signup
+			fmt.Print("Enter your username: ")
+			username, _ := reader.ReadString('\n')
+			username = username[:len(username)-1] // Remove the newline character
 
 			// Enter fullname
 			fmt.Print("Enter Your Full Name: ")
@@ -56,7 +66,6 @@ func main() {
 
 			// Send the signup request to the server
 			fmt.Fprint(conn, "/signup:"+username+":"+password+":"+fullname+":"+bio+":"+role+"\n")
-
 			// Read the server's response
 			response, err := bufio.NewReader(conn).ReadString('\n')
 			if err != nil {
@@ -66,6 +75,10 @@ func main() {
 
 		case "2":
 			// Login
+			fmt.Print("Enter your username: ")
+			username, _ := reader.ReadString('\n')
+			username = username[:len(username)-1] // Remove the newline character
+
 			fmt.Print("Enter your password: ")
 			password, _ := reader.ReadString('\n')
 			password = password[:len(password)-1] // Remove the newline character
@@ -88,9 +101,24 @@ func main() {
 			}
 
 		case "3":
-			// Quit
-			fmt.Println("Goodbye!")
-			return
+			// Retrieve all chat history
+			fmt.Println("Retrieving All Chat History...")
+			retrieveAndDisplayChatHistory(conn)
+
+		case "4":
+			// Retrieve all chat history
+			fmt.Println("Retrieving All Chat History...")
+
+			fmt.Print("Enter Username: ")
+			username, _ := reader.ReadString('\n')
+			username = username[:len(username)-1] // Remove the newline character
+			retrieveAndDisplayChatHistoryByUser(conn, username)
+
+		case "5":
+			fmt.Print("Enter Username:")
+			username, _ := reader.ReadString('\n')
+			username = username[:len(username)-1] // Remove the newline character
+			retrieveUserInformation(conn, username)
 
 		default:
 			fmt.Println("Invalid option. Please choose 1 for Signup, 2 for Login, or 3 to Quit.")
@@ -116,5 +144,62 @@ func sendMessages(conn net.Conn, username string) {
 		if message != "" {
 			fmt.Fprint(conn, username+":"+message+"\n")
 		}
+	}
+}
+func retrieveAndDisplayChatHistory(conn net.Conn) {
+	// Send the request to the server
+	fmt.Fprint(conn, "/retrieveAllChat")
+
+	reader := bufio.NewReader(conn)
+	for {
+		response, err := reader.ReadString('\n')
+		if err != nil {
+			fmt.Println("Error reading server response:", err)
+			break
+		}
+		fmt.Print(response)
+	}
+}
+func retrieveAndDisplayChatHistoryByUser(conn net.Conn, username string) {
+	// Send the request to the server
+	fmt.Fprint(conn, "/retrieveUserChat:"+username+"\n")
+
+	reader := bufio.NewReader(conn)
+	for {
+		response, err := reader.ReadString('\n')
+		if err != nil {
+			fmt.Println("Error reading server response:", err)
+			break
+		}
+		fmt.Print(response)
+	}
+}
+func retrieveUserInformation(conn net.Conn, username string) {
+	// Send the request to the server
+	fmt.Fprintf(conn, "/retrieveUserInformation:%s\n", username)
+
+	reader := bufio.NewReader(conn)
+	response, err := reader.ReadString('\n')
+	if err != nil {
+		fmt.Println("Error reading server response:", err)
+		return
+	}
+
+	if strings.HasPrefix(response, "{") {
+		// It seems like a JSON response, so parse it
+		var userInfo UserInfo
+		if err := json.Unmarshal([]byte(response), &userInfo); err != nil {
+			fmt.Println("Error parsing JSON:", err)
+			return
+		}
+		fmt.Print("\n\n\n")
+		// Display the user information
+		fmt.Println("User Information:")
+		fmt.Println("Full Name:", userInfo.Fullname)
+		fmt.Println("Bio:", userInfo.Bio)
+		fmt.Println("Role:", userInfo.Role)
+		fmt.Println("Signup Date and Time:", userInfo.SignupDateTime)
+	} else {
+		fmt.Println("Unexpected server response:", response)
 	}
 }
