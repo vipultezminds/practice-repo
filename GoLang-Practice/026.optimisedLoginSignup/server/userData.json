@@ -1,0 +1,23 @@
+{
+    "adi": {
+        "bio": "lasdhgpaolrsgha",
+        "fullname": "aditya kumar singh",
+        "password": "adi",
+        "role": "python dev",
+        "signupDateTime": "2023-10-16T15:02:43+05:30"
+    },
+    "naveen": {
+        "bio": "naveen is java dev from delhi",
+        "fullname": "naveen kumar singh",
+        "password": "naveen",
+        "role": "golang dev",
+        "signupDateTime": "2023-10-16T15:25:43+05:30"
+    },
+    "vipul": {
+        "bio": "vipul is from jharkhand, Expert in nodejs development, and learning Golang.",
+        "fullname": "vipul kumar singh",
+        "password": "vipul",
+        "role": "Golang Dev",
+        "signupDateTime": "2023-10-16T15:29:43+05:30"
+    }
+}
