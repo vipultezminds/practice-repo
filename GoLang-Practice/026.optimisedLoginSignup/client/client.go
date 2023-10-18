@@ -6,7 +6,12 @@ import (
 	"fmt"
 	"net"
 	"os"
+	"regexp"
 	"strings"
+	"syscall"
+
+	"gitlab.com/david_mbuvi/go_asterisks"
+	"golang.org/x/term"
 )
 
 type UserInfo struct {
@@ -14,6 +19,8 @@ type UserInfo struct {
 	Bio            string `json:"bio"`
 	Role           string `json:"role"`
 	SignupDateTime string `json:"signupDateTime"`
+	IsActive       bool   `json:"isActive"`
+	LastSeen       string `json:"LastSeen"`
 }
 
 func main() {
@@ -33,7 +40,6 @@ func main() {
 		fmt.Print("Choose an option:\n1.Signup\n2.Login\n3.RetrieveAllChat History\n")
 		fmt.Println("4.Retrieve All Chat by a User.")
 		fmt.Println("5.Retrieve User Info.")
-		fmt.Println("6.User IsActive or LastSeen")
 		fmt.Print("Enter Your Choice : ")
 		option, _ := reader.ReadString('\n')
 		option = option[:len(option)-1] // Remove the newline character
@@ -41,37 +47,55 @@ func main() {
 		switch option {
 		case "1":
 			// Signup
-			fmt.Print("Enter your username: ")
-			username, _ := reader.ReadString('\n')
-			username = username[:len(username)-1] // Remove the newline character
+			for {
+				fmt.Print("Enter your username: ")
+				username, _ := reader.ReadString('\n')
+				username = username[:len(username)-1] // Remove the newline character
 
-			// Enter fullname
-			fmt.Print("Enter Your Full Name: ")
-			fullname, _ := reader.ReadString('\n')
-			fullname = fullname[:len(fullname)-1] // Remove the newline character
+				// Enter fullname
+				fmt.Print("Enter Your Full Name: ")
+				fullname, _ := reader.ReadString('\n')
+				fullname = fullname[:len(fullname)-1] // Remove the newline character
 
-			// Enter Bio of user
-			fmt.Print("Enter His Bio Details: ")
-			bio, _ := reader.ReadString('\n')
-			bio = bio[:len(bio)-1] // Remove the newline character
+				// Enter Bio of user
+				fmt.Print("Enter His Bio Details: ")
+				bio, _ := reader.ReadString('\n')
+				bio = bio[:len(bio)-1] // Remove the newline character
 
-			// Enter the role
-			fmt.Print("Enter User's Role: ")
-			role, _ := reader.ReadString('\n')
-			role = role[:len(role)-1] // Remove the newline character
+				// Enter the role
+				fmt.Print("Enter User's Role: ")
+				role, _ := reader.ReadString('\n')
+				role = role[:len(role)-1] // Remove the newline character
 
-			fmt.Print("Enter your password: ")
-			password, _ := reader.ReadString('\n')
-			password = password[:len(password)-1] // Remove the newline character
+				for {
+					// fmt.Print("Enter your password: ")
+					// password, _ := reader.ReadString('\n')
+					// password = password[:len(password)-1] // Remove the newline character
 
-			// Send the signup request to the server
-			fmt.Fprint(conn, "/signup:"+username+":"+password+":"+fullname+":"+bio+":"+role+"\n")
-			// Read the server's response
-			response, err := bufio.NewReader(conn).ReadString('\n')
-			if err != nil {
-				fmt.Println("Error reading server response:", err)
+					bytePassword, err := term.ReadPassword(syscall.Stdin)
+					if err != nil {
+						panic(err)
+					}
+
+					password := string(bytePassword)
+
+					if isValidPassword(password) {
+						// Send the signup request to the server
+						fmt.Fprint(conn, "/signup:"+username+":"+password+":"+fullname+":"+bio+":"+role+"\n")
+						// Read the server's response
+						response, err := bufio.NewReader(conn).ReadString('\n')
+						if err != nil {
+							fmt.Println("Error reading server response:", err)
+						}
+						fmt.Println(response)
+						break
+					} else {
+						fmt.Println("Invalid password. Password should be at least 8 characters and meet the specified criteria. Please try again.")
+					}
+				}
+
+				break // Break out of the signup loop
 			}
-			fmt.Println(response)
 
 		case "2":
 			// Login
@@ -80,8 +104,21 @@ func main() {
 			username = username[:len(username)-1] // Remove the newline character
 
 			fmt.Print("Enter your password: ")
-			password, _ := reader.ReadString('\n')
-			password = password[:len(password)-1] // Remove the newline character
+			
+			// if want the password to be hidden
+			// bytePassword, err := term.ReadPassword(syscall.Stdin)
+			// if err != nil {
+			// 	panic(err)
+			// }
+
+			// password := string(bytePassword)
+
+			// if want password hidden with asterisks
+			bytePassword, err := go_asterisks.GetUsersPassword("", true, os.Stdin, os.Stdout)
+			if err != nil {
+				fmt.Println(err.Error())
+			}
+			password := string(bytePassword)
 
 			// Send the login request to the server
 			fmt.Fprint(conn, "/login:"+username+":"+password+"\n")
@@ -195,11 +232,60 @@ func retrieveUserInformation(conn net.Conn, username string) {
 		fmt.Print("\n\n\n")
 		// Display the user information
 		fmt.Println("User Information:")
-		fmt.Println("Full Name:", userInfo.Fullname)
-		fmt.Println("Bio:", userInfo.Bio)
-		fmt.Println("Role:", userInfo.Role)
-		fmt.Println("Signup Date and Time:", userInfo.SignupDateTime)
+		fmt.Println("Full Name: ", userInfo.Fullname)
+		fmt.Println("Bio: ", userInfo.Bio)
+		fmt.Println("Role: ", userInfo.Role)
+
+		if userInfo.IsActive == true {
+			fmt.Println("IsActive: ", userInfo.IsActive)
+		} else {
+			fmt.Println("LastSeen: ", userInfo.LastSeen)
+		}
+		fmt.Println("Signup Date and Time: ", userInfo.SignupDateTime)
+
 	} else {
 		fmt.Println("Unexpected server response:", response)
 	}
+}
+
+// func isValidPassword(password string) bool {
+// 	if len(password) < 8 {
+// 		return false
+// 	}
+
+// 	hasUpperCase := false
+// 	hasLowerCase := false
+// 	hasDigit := false
+// 	hasSpecialChar := false
+
+// 	for _, char := range password {
+// 		if unicode.IsUpper(char) {
+// 			hasUpperCase = true
+// 		} else if unicode.IsLower(char) {
+// 			hasLowerCase = true
+// 		} else if unicode.IsDigit(char) {
+// 			hasDigit = true
+// 		} else if !unicode.IsLetter(char) && !unicode.IsDigit(char) {
+// 			hasSpecialChar = true
+// 		}
+// 	}
+
+// 	return hasUpperCase && hasLowerCase && hasDigit && hasSpecialChar
+// }
+func isValidPassword(password string) bool {
+	secure := true
+	tests := []string{".{8,}", "[a-z]", "[A-Z]", "[0-9]", "[^\\d\\w]"}
+	for _, test := range tests {
+		t, err := regexp.MatchString(test, password)
+		if err != nil {
+			fmt.Printf("Regex error: %v\n", err)
+			return false
+		}
+
+		if !t {
+			secure = false
+			break
+		}
+	}
+	return secure
 }

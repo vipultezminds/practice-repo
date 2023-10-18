@@ -8,11 +8,14 @@ import (
 	"sort"
 	"strings"
 	"time"
+
+	"golang.org/x/crypto/bcrypt"
 )
 
 var clients = make(map[net.Conn]bool)
 var chatData = make(map[string][]map[string]string)
 var users = make(map[string]map[string]interface{})
+var connToUsername = make(map[net.Conn]string)
 
 type Chat struct {
 	IPAddress string    `json:"ipAddress"`
@@ -73,6 +76,20 @@ func handleClient(conn net.Conn) {
 		message := make([]byte, 1024)
 		n, err := conn.Read(message)
 		if err != nil {
+			username, exists := connToUsername[conn]
+			if exists {
+				fmt.Printf("%s disconnected.\n", username)
+
+				// Update the user's isActive to false and LastSeen to the current time
+				userData := users[username]
+				userData["isActive"] = false
+				userData["LastSeen"] = time.Now().Format(time.RFC3339)
+				saveUserData()
+				// Remove the client connection from the map
+				delete(connToUsername, conn)
+			} else {
+				fmt.Printf("An unidentified client disconnected.\n")
+			}
 			fmt.Printf("Client %s disconnected.\n", clientAddr)
 			delete(clients, conn)
 			return
@@ -81,9 +98,8 @@ func handleClient(conn net.Conn) {
 		msg := strings.TrimSpace(string(message[:n]))
 		if strings.HasPrefix(msg, "/signup") {
 			// Process signup
-			parts := strings.SplitN(msg, ":", 6) // Change 4 to 6 to match the number of parts
-			fmt.Println(parts)
-			if len(parts) != 6 { // Change 4 to 6 here as well
+			parts := strings.SplitN(msg, ":", 6)
+			if len(parts) != 6 {
 				fmt.Println("Invalid signup format")
 				continue
 			}
@@ -101,18 +117,14 @@ func handleClient(conn net.Conn) {
 			// Retrieve all chat history
 			sendAllChatHistory(conn)
 		} else if strings.HasPrefix(msg, "/retrieveUserChat") {
-			// Retrieve all chat history
 			parts := strings.SplitN(msg, ":", 2)
-			fmt.Println(parts)
 			if len(parts) != 2 {
 				fmt.Println("Invalid username format")
 				continue
 			}
 			username := parts[1]
 			sendAllChatHistoryByUser(conn, username)
-
 		} else if strings.HasPrefix(msg, "/login") {
-			// Process login
 			parts := strings.SplitN(msg, ":", 3)
 			if len(parts) != 3 {
 				fmt.Println("Invalid login format")
@@ -122,22 +134,22 @@ func handleClient(conn net.Conn) {
 			password := parts[2]
 			if login(username, password) {
 				fmt.Fprintln(conn, "Login successful.")
+				fmt.Printf("%s is connected with IP %s.\n", username, clientAddr)
+
+				// Store the relation between the connection and the username
+				connToUsername[conn] = username
 			} else {
 				fmt.Fprintln(conn, "Login failed. Please check your username and password or signup if you don't have an account.")
 			}
 		} else if strings.HasPrefix(msg, "/retrieveUserInformation") {
-			// Retrieve UserInformation
 			parts := strings.SplitN(msg, ":", 2)
-			fmt.Println(parts)
 			if len(parts) != 2 {
 				fmt.Println("Invalid username format")
 				continue
 			}
 			username := parts[1]
 			retrieveUserInfo(conn, username)
-
 		} else {
-			// Handle regular chat messages
 			parts := strings.SplitN(msg, ":", 2)
 			if len(parts) != 2 {
 				fmt.Println("Invalid message format")
@@ -146,7 +158,6 @@ func handleClient(conn net.Conn) {
 			username := parts[0]
 			messageText := parts[1]
 			timestampedMsg := fmt.Sprintf("[%s] %s: %s", time.Now().Format(time.RFC3339), username, messageText)
-			// Save to saveChat.json
 			saveToJSON(username, messageText, clientAddr)
 			broadcast(timestampedMsg)
 		}
@@ -158,33 +169,50 @@ func signup(username, password, fullname, bio, role string) bool {
 	if _, exists := users[username]; exists {
 		return false
 	}
-
+	hash, _ := HashPassword(password) 
 	// Get the current date and time
 	signupDateTime := time.Now().Format(time.RFC3339)
 
 	// Save the user data
 	userData := map[string]interface{}{
 		"fullname":       fullname,
-		"password":       password,
+		"password":       hash,
 		"bio":            bio,
 		"role":           role,
-		"signupDateTime": signupDateTime, // Add signup date and time
+		"signupDateTime": signupDateTime,
+		"isActive":       false, // Added isActive field
+		"LastSeen":       "",    // Added LastSeen field
 	}
 	users[username] = userData
 
-	saveUserData() // Save user data to the file
+	saveUserData()
 	return true
 }
 
+// func login(username, password string) bool {
+// 	if userData, exists := users[username]; exists {
+// 		if storedPassword, ok := userData["password"].(string); ok && storedPassword == password {
+// 			userData["isActive"] = true
+// 			userData["LastSeen"] = "" // Reset LastSeen
+// 			saveUserData()            // Save the updated user data
+// 			return true
+// 		}
+// 	}
+// 	return false
+// }
+
 func login(username, password string) bool {
-	// Check if the username exists and the password is correct
 	if userData, exists := users[username]; exists {
-		if storedPassword, ok := userData["password"].(string); ok && storedPassword == password {
+		if storedPassword, ok := userData["password"].(string); ok && CheckPasswordHash(password, storedPassword) {
+			userData["isActive"] = true
+			userData["LastSeen"] = "" // Reset LastSeen
+			saveUserData() // Save the updated user data
 			return true
 		}
 	}
 	return false
 }
+
 
 func saveUserData() {
 	file, err := os.Create("userData.json")
@@ -253,84 +281,7 @@ func loadChatHistory() {
 	}
 }
 
-func getUsernameByConn(conn net.Conn) string {
-	// Find the username associated with the connection
-	for username, userChats := range chatData {
-		for _, userChat := range userChats {
-			if userChat["ipAddress"] == conn.RemoteAddr().String() {
-				return username
-			}
-		}
-	}
-	return ""
-}
-
-func sendAllChatHistory(conn net.Conn) {
-	// Open and read the JSON file
-	file, err := os.Open("saveChat.json")
-	if err != nil {
-		fmt.Println("Error opening file:", err)
-		return
-	}
-	defer file.Close()
-
-	// Decode the JSON data
-	var chatsByUser ChatsByUser
-	decoder := json.NewDecoder(file)
-	if err := decoder.Decode(&chatsByUser); err != nil {
-		fmt.Println("Error decoding JSON:", err)
-		return
-	}
-
-	// Print the sorted chat messages in the desired format
-	for username, chats := range chatsByUser {
-		// Sort the chat messages for each user by time
-		sort.Slice(chats, func(i, j int) bool {
-			return chats[i].Time.Before(chats[j].Time)
-		})
-
-		// Print the sorted chat messages
-		for _, chat := range chats {
-			formattedMessage := fmt.Sprintf("[%s] %s :: %s\n", chat.Time, username, chat.Message)
-			fmt.Fprint(conn, formattedMessage) // Send the formatted message to the client
-		}
-	}
-}
-func sendAllChatHistoryByUser(conn net.Conn, clientUserName string) {
-	// Open and read the JSON file
-	file, err := os.Open("saveChat.json")
-	if err != nil {
-		fmt.Println("Error opening file:", err)
-		return
-	}
-	defer file.Close()
-
-	// Decode the JSON data
-	var chatsByUser ChatsByUser
-	decoder := json.NewDecoder(file)
-	if err := decoder.Decode(&chatsByUser); err != nil {
-		fmt.Println("Error decoding JSON:", err)
-		return
-	}
-
-	// Print the sorted chat messages in the desired format
-	for username, chats := range chatsByUser {
-		// Sort the chat messages for each user by time
-		sort.Slice(chats, func(i, j int) bool {
-			return chats[i].Time.Before(chats[j].Time)
-		})
-
-		if clientUserName == username {
-			// Print the sorted chat messages
-			for _, chat := range chats {
-				formattedMessage := fmt.Sprintf("[%s] %s :: %s\n", chat.Time, username, chat.Message)
-				fmt.Fprint(conn, formattedMessage) // Send the formatted message to the client
-			}
-		}
-	}
-}
 func retrieveUserInfo(conn net.Conn, username string) {
-	fmt.Println("trying to retrieve userinfo")
 	// Open and read the JSON file
 	file, err := os.Open("userData.json")
 	if err != nil {
@@ -348,7 +299,6 @@ func retrieveUserInfo(conn net.Conn, username string) {
 
 	userInfo, exists := userData[username]
 	if !exists {
-		// User not found
 		fmt.Fprintln(conn, "User not found.")
 		return
 	}
@@ -359,6 +309,69 @@ func retrieveUserInfo(conn net.Conn, username string) {
 		return
 	}
 
-	// Send the user info to the client
 	fmt.Fprintln(conn, string(userInfoJSON))
+}
+
+func sendAllChatHistory(conn net.Conn) {
+	file, err := os.Open("saveChat.json")
+	if err != nil {
+		fmt.Println("Error opening file:", err)
+		return
+	}
+	defer file.Close()
+
+	var chatsByUser ChatsByUser
+	decoder := json.NewDecoder(file)
+	if err := decoder.Decode(&chatsByUser); err != nil {
+		fmt.Println("Error decoding JSON:", err)
+		return
+	}
+
+	for username, chats := range chatsByUser {
+		sort.Slice(chats, func(i, j int) bool {
+			return chats[i].Time.Before(chats[j].Time)
+		})
+
+		for _, chat := range chats {
+			formattedMessage := fmt.Sprintf("[%s] %s :: %s\n", chat.Time, username, chat.Message)
+			fmt.Fprint(conn, formattedMessage)
+		}
+	}
+}
+
+func sendAllChatHistoryByUser(conn net.Conn, clientUserName string) {
+	file, err := os.Open("saveChat.json")
+	if err != nil {
+		fmt.Println("Error opening file:", err)
+		return
+	}
+	defer file.Close()
+
+	var chatsByUser ChatsByUser
+	decoder := json.NewDecoder(file)
+	if err := decoder.Decode(&chatsByUser); err != nil {
+		fmt.Println("Error decoding JSON:", err)
+		return
+	}
+
+	for username, chats := range chatsByUser {
+		sort.Slice(chats, func(i, j int) bool {
+			return chats[i].Time.Before(chats[j].Time)
+		})
+
+		if clientUserName == username {
+			for _, chat := range chats {
+				formattedMessage := fmt.Sprintf("[%s] %s :: %s\n", chat.Time, username, chat.Message)
+				fmt.Fprint(conn, formattedMessage)
+			}
+		}
+	}
+}
+func HashPassword(password string) (string, error) {
+	bytes, err := bcrypt.GenerateFromPassword([]byte(password), 14)
+	return string(bytes), err
+}
+func CheckPasswordHash(password, hash string) bool {
+	err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(password))
+	return err == nil
 }
