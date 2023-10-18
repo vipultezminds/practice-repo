@@ -37,7 +37,9 @@ func main() {
 	reader := bufio.NewReader(os.Stdin)
 
 	for {
-		fmt.Print("Choose an option:\n1.Signup\n2.Login\n")
+		fmt.Print("Choose an option:\n1.Signup\n2.Login\n3.RetrieveAllChat History\n")
+		fmt.Println("4.Retrieve All Chat by a User.")
+		fmt.Println("5.Retrieve User Info.")
 		fmt.Print("Enter Your Choice : ")
 		option, _ := reader.ReadString('\n')
 		option = option[:len(option)-1] // Remove the newline character
@@ -102,7 +104,7 @@ func main() {
 			username = username[:len(username)-1] // Remove the newline character
 
 			fmt.Print("Enter your password: ")
-
+			
 			// if want the password to be hidden
 			// bytePassword, err := term.ReadPassword(syscall.Stdin)
 			// if err != nil {
@@ -128,73 +130,32 @@ func main() {
 			}
 			fmt.Println(response)
 
+			// If login is successful, start the chat
 			if response == "Login successful.\n" {
-				fmt.Print("Choose an option:\n1.RetrieveAllChat History\n")
-				fmt.Println("2.Retrieve All Chat by a User.")
-				fmt.Println("3.Retrieve User Info.")
-				fmt.Println("4.Chat With Other Users.")
-				fmt.Print("Enter Your Choice : ")
-
-				option, _ := reader.ReadString('\n')
-				option = option[:len(option)-1] // Remove the newline character
-
-				switch option {
-				case "1":
-					// Retrieve all chat history
-					fmt.Println("Retrieving All Chat History...")
-					retrieveAndDisplayChatHistory(conn)
-
-				case "2":
-					// Retrieve all chat history
-					fmt.Println("Retrieving All Chat History...")
-
-					fmt.Print("Enter Username: ")
-					username, _ := reader.ReadString('\n')
-					username = username[:len(username)-1] // Remove the newline character
-					retrieveAndDisplayChatHistoryByUser(conn, username)
-
-				case "3":
-					fmt.Print("Enter Username:")
-					username, _ := reader.ReadString('\n')
-					username = username[:len(username)-1] // Remove the newline character
-					retrieveUserInformation(conn, username)
-
-				case "4":
-					go readMessages(conn)
-					sendMessages(conn, username)
-					return
-
-				default:
-					fmt.Println("Invalid option. Please choose 1 for Signup, 2 for Login, or 3 to Quit.")
-				}
+				go readMessages(conn)
+				sendMessages(conn, username)
+				return
 			}
 
-			// // If login is successful, start the chat
-			// if response == "Login successful.\n" {
-			// 	go readMessages(conn)
-			// 	sendMessages(conn, username)
-			// 	return
-			// }
+		case "3":
+			// Retrieve all chat history
+			fmt.Println("Retrieving All Chat History...")
+			retrieveAndDisplayChatHistory(conn)
 
-		// case "3":
-		// 	// Retrieve all chat history
-		// 	fmt.Println("Retrieving All Chat History...")
-		// 	retrieveAndDisplayChatHistory(conn)
+		case "4":
+			// Retrieve all chat history
+			fmt.Println("Retrieving All Chat History...")
 
-		// case "4":
-		// 	// Retrieve all chat history
-		// 	fmt.Println("Retrieving All Chat History...")
+			fmt.Print("Enter Username: ")
+			username, _ := reader.ReadString('\n')
+			username = username[:len(username)-1] // Remove the newline character
+			retrieveAndDisplayChatHistoryByUser(conn, username)
 
-		// 	fmt.Print("Enter Username: ")
-		// 	username, _ := reader.ReadString('\n')
-		// 	username = username[:len(username)-1] // Remove the newline character
-		// 	retrieveAndDisplayChatHistoryByUser(conn, username)
-
-		// case "5":
-		// 	fmt.Print("Enter Username:")
-		// 	username, _ := reader.ReadString('\n')
-		// 	username = username[:len(username)-1] // Remove the newline character
-		// 	retrieveUserInformation(conn, username)
+		case "5":
+			fmt.Print("Enter Username:")
+			username, _ := reader.ReadString('\n')
+			username = username[:len(username)-1] // Remove the newline character
+			retrieveUserInformation(conn, username)
 
 		default:
 			fmt.Println("Invalid option. Please choose 1 for Signup, 2 for Login, or 3 to Quit.")

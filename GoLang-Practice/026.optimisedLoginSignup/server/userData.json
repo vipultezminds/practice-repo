@@ -1,11 +1,1 @@
-{
-    "vipul": {
-        "LastSeen": "",
-        "bio": "Vipul is MERN Developer. Learning Golang",
-        "fullname": "vipul singh",
-        "isActive": true,
-        "password": "$2a$14$xQMAlBDXd4jRJ3tt8JmpkuEc9WpQrTGgaGQa4tklxaxpm3cygLnsO",
-        "role": "GoLang dev",
-        "signupDateTime": "2023-10-17T17:51:11+05:30"
-    }
-}
+{"vipul":{"LastSeen":"2023-10-18T11:04:03+05:30","bio":"Vipul is MERN Developer. Learning Golang","fullname":"vipul singh","isActive":false,"password":"$2a$14$xQMAlBDXd4jRJ3tt8JmpkuEc9WpQrTGgaGQa4tklxaxpm3cygLnsO","role":"GoLang dev","signupDateTime":"2023-10-17T17:51:11+05:30"}}
