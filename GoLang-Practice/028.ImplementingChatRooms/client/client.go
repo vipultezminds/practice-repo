@@ -168,34 +168,6 @@ func main() {
 					fmt.Println("Invalid option. Please choose 1 for Signup, 2 for Login, or 3 to Quit.")
 				}
 			}
-
-			// // If login is successful, start the chat
-			// if response == "Login successful.\n" {
-			// 	go readMessages(conn)
-			// 	sendMessages(conn, username)
-			// 	return
-			// }
-
-		// case "3":
-		// 	// Retrieve all chat history
-		// 	fmt.Println("Retrieving All Chat History...")
-		// 	retrieveAndDisplayChatHistory(conn)
-
-		// case "4":
-		// 	// Retrieve all chat history
-		// 	fmt.Println("Retrieving All Chat History...")
-
-		// 	fmt.Print("Enter Username: ")
-		// 	username, _ := reader.ReadString('\n')
-		// 	username = username[:len(username)-1] // Remove the newline character
-		// 	retrieveAndDisplayChatHistoryByUser(conn, username)
-
-		// case "5":
-		// 	fmt.Print("Enter Username:")
-		// 	username, _ := reader.ReadString('\n')
-		// 	username = username[:len(username)-1] // Remove the newline character
-		// 	retrieveUserInformation(conn, username)
-
 		default:
 			fmt.Println("Invalid option. Please choose 1 for Signup, 2 for Login, or 3 to Quit.")
 		}
@@ -275,7 +247,7 @@ func retrieveUserInformation(conn net.Conn, username string) {
 		fmt.Println("Bio: ", userInfo.Bio)
 		fmt.Println("Role: ", userInfo.Role)
 
-		if userInfo.IsActive == true {
+		if userInfo.IsActive{
 			fmt.Println("IsActive: ", userInfo.IsActive)
 		} else {
 			fmt.Println("LastSeen: ", userInfo.LastSeen)
