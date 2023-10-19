@@ -134,6 +134,7 @@ func main() {
 				fmt.Println("3.Retrieve User Info.")
 				fmt.Println("4.Chat With Other Users.")
 				fmt.Println("5.Chat With Specific User.")
+				fmt.Println("6.Load Chat with specific user.")
 				fmt.Print("Enter Your Choice : ")
 
 				option, _ := reader.ReadString('\n')
@@ -170,6 +171,25 @@ func main() {
 					go readPrivateMessages(conn)
 					sendPrivateMessages(conn, username)
 					return
+				case "6":
+					go readPrivateMessages(conn)
+					reader := bufio.NewReader(os.Stdin)
+					fmt.Print("Enter recipient's username: ")
+					recipient, _ := reader.ReadString('\n')
+					recipient = recipient[:len(recipient)-1] // Remove the newline character
+				
+					// Send a request to load the chat history with the specific user
+					fmt.Fprintf(conn, "/loaduserchathistory:%s\n", recipient)
+				
+					// Read and display the chat history
+					for {
+						message, err := bufio.NewReader(conn).ReadString('\n')
+						if err != nil {
+							fmt.Println("Connection to the server has been closed.")
+							os.Exit(1)
+						}
+						fmt.Print(message)
+					}
 				default:
 					fmt.Println("Invalid option. Please choose 1 for Signup, 2 for Login, or 3 to Quit.")
 				}

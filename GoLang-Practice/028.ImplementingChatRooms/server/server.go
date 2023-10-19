@@ -148,13 +148,19 @@ func handleClient(conn net.Conn) {
 				return
 			}
 			recipientUsername := strings.TrimSpace(parts[0][18:])
-			flag := isPresentUser(recipientUsername, conn) // checking if reciever is present in databse or not
+			flag := isPresentUser(recipientUsername, conn) // checking if the receiver is present in the database or not
 			if flag {
 				handlePrivateChat(conn, msg, conn.RemoteAddr().String())
 			} else {
 				fmt.Fprintln(conn, "User Not Found,,,,,,,")
 			}
-
+		} else if strings.HasPrefix(msg, "/loaduserchathistory:") {
+			// Load private chat history for the sender and receiver
+			fmt.Println("loaduserchathistoryprivate")
+			parts := strings.SplitN(msg, ":", 2)
+			recipientUsername := parts[1]
+			sender := connToUsername[conn]
+			loadPrivateChats(sender, recipientUsername, conn)
 		} else {
 			parts := strings.SplitN(msg, ":", 2)
 			if len(parts) != 2 {
@@ -447,7 +453,6 @@ func savePrivateChat(sender, receiver, message, clientAddr string, conn net.Conn
 	}
 }
 
-
 func isPresentUser(username string, conn net.Conn) bool {
 	// Open and read the JSON file
 	file, err := os.Open("userData.json")
@@ -470,5 +475,45 @@ func isPresentUser(username string, conn net.Conn) bool {
 		return false
 	} else {
 		return true
+	}
+}
+
+func loadPrivateChats(sender, receiver string, conn net.Conn) {
+	// Sort the usernames to ensure consistent file naming
+	usernames := []string{sender, receiver}
+	sort.Strings(usernames)
+
+	filename := fmt.Sprintf("%s_%s_private_chat.json", usernames[0], usernames[1])
+
+	// Declare privateChatData to store chat history
+	var privateChatData []map[string]string
+
+	// Check if the file already exists
+	if _, err := os.Stat(filename); err != nil {
+		// File doesn't exist; create an empty slice for chat history
+		privateChatData = make([]map[string]string, 0)
+	} else {
+		// Load the existing private chat data
+		file, err := os.Open(filename)
+		if err != nil {
+			fmt.Println("Error opening private chat file:", err)
+		}
+		defer file.Close()
+
+		decoder := json.NewDecoder(file)
+		if err := decoder.Decode(&privateChatData); err != nil {
+			fmt.Println("Error decoding private chat file:", err)
+		}
+	}
+
+	// Iterate through the loaded chat data and format it
+	for _, chatMessage := range privateChatData {
+		// Format each chat message
+		chatTime := chatMessage["time"]
+		chatSender := chatMessage["sender"]
+		chatMessageText := chatMessage["message"]
+		fmt.Fprintf(conn, "[%s] %s: %s\n", chatTime, chatSender, chatMessageText)
+		fmt.Printf("[%s] %s: %s\n", chatTime, chatSender, chatMessageText)
+
 	}
 }
