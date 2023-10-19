@@ -167,7 +167,7 @@ func main() {
 
 				case "5":
 					// Private Chat
-					go readMessages(conn)
+					go readPrivateMessages(conn)
 					sendPrivateMessages(conn, username)
 					return
 				default:
@@ -296,6 +296,19 @@ func sendPrivateMessages(conn net.Conn, username string) {
 
 		if message != "" {
 			fmt.Fprint(conn, "Private message to "+recipient+": "+message+"\n")
+		}
+	}
+}
+func readPrivateMessages(conn net.Conn) {
+	for {
+		message, err := bufio.NewReader(conn).ReadString('\n')
+		if err != nil {
+			fmt.Println("Connection to the server has been closed.")
+			os.Exit(1)
+		}
+		// fmt.Print(message)
+		if !strings.HasPrefix(message,"World Chat:"){
+			fmt.Println(message)
 		}
 	}
 }

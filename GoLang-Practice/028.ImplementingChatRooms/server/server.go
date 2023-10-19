@@ -18,6 +18,14 @@ var users = make(map[string]map[string]interface{})
 var connToUsername = make(map[net.Conn]string)
 var oneToOneConnections = make(map[string]net.Conn)
 
+type Message struct {
+	IPAddress string `json:"ipAddress"`
+	Message   string `json:"message"`
+	Receiver  string `json:"receiver"`
+	Sender    string `json:"sender"`
+	Time      string `json:"time"`
+}
+
 type Chat struct {
 	IPAddress string    `json:"ipAddress"`
 	Message   string    `json:"message"`
@@ -141,12 +149,12 @@ func handleClient(conn net.Conn) {
 			}
 			recipientUsername := strings.TrimSpace(parts[0][18:])
 			flag := isPresentUser(recipientUsername, conn) // checking if reciever is present in databse or not
-			if flag{
+			if flag {
 				handlePrivateChat(conn, msg, conn.RemoteAddr().String())
-			}else{
+			} else {
 				fmt.Fprintln(conn, "User Not Found,,,,,,,")
 			}
-			
+
 		} else {
 			parts := strings.SplitN(msg, ":", 2)
 			if len(parts) != 2 {
@@ -154,7 +162,7 @@ func handleClient(conn net.Conn) {
 			}
 			username := parts[0]
 			messageText := parts[1]
-			timestampedMsg := fmt.Sprintf("[%s] %s: %s", time.Now().Format(time.RFC3339), username, messageText)
+			timestampedMsg := fmt.Sprintf("World Chat: [%s] %s: %s", time.Now().Format(time.RFC3339), username, messageText)
 			saveToJSON(username, messageText, conn.RemoteAddr().String())
 			broadcast(timestampedMsg)
 		}
@@ -174,7 +182,7 @@ func handlePrivateChat(sender net.Conn, message string, clientAddr string) {
 			privateMessage := fmt.Sprintf("Private message from %s: %s", connToUsername[sender], parts[1])
 			fmt.Fprintln(recipientConn, privateMessage)
 		}
-	}else{
+	} else {
 		fmt.Println("User not found")
 	}
 
@@ -388,17 +396,27 @@ func savePrivateChat(sender, receiver, message, clientAddr string, conn net.Conn
 
 	filename := fmt.Sprintf("%s_%s_private_chat.json", usernames[0], usernames[1])
 
-	// Load the existing private chat data (if any)
-	privateChatData := make([]map[string]string, 0)
+	// Declare privateChatData outside of the conditional block
+	var privateChatData []map[string]string
 
 	// Check if the file already exists
-	file, err := os.OpenFile(filename, os.O_RDWR|os.O_CREATE, os.ModeAppend)
-	if err == nil {
+	if _, err := os.Stat(filename); err != nil {
+		// File doesn't exist; create an empty slice to store chat data
+		privateChatData = make([]map[string]string, 0)
+	} else {
+		// Load the existing private chat data
+		file, err := os.Open(filename)
+		if err != nil {
+			fmt.Println("Error opening private chat file:", err)
+			return
+		}
+		defer file.Close()
+
 		decoder := json.NewDecoder(file)
 		if err := decoder.Decode(&privateChatData); err != nil {
 			fmt.Println("Error decoding private chat file:", err)
+			return
 		}
-		file.Close()
 	}
 
 	// Create a new private chat message
@@ -414,7 +432,7 @@ func savePrivateChat(sender, receiver, message, clientAddr string, conn net.Conn
 	privateChatData = append(privateChatData, chatMessage)
 
 	// Overwrite the private chat file with the updated data
-	file, err = os.Create(filename)
+	file, err := os.Create(filename)
 	if err != nil {
 		fmt.Println("Could not create or overwrite private chat file:", err)
 		return
@@ -428,6 +446,7 @@ func savePrivateChat(sender, receiver, message, clientAddr string, conn net.Conn
 		return
 	}
 }
+
 
 func isPresentUser(username string, conn net.Conn) bool {
 	// Open and read the JSON file
