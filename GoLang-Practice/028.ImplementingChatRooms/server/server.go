@@ -16,6 +16,7 @@ var clients = make(map[net.Conn]bool)
 var chatData = make(map[string][]map[string]string)
 var users = make(map[string]map[string]interface{})
 var connToUsername = make(map[net.Conn]string)
+var oneToOneConnections = make(map[string]net.Conn)
 
 type Chat struct {
 	IPAddress string    `json:"ipAddress"`
@@ -34,7 +35,6 @@ func main() {
 	defer listener.Close()
 	fmt.Printf("Chat server running on port %s...\n", port)
 
-	// Load user data from file
 	loadUserData()
 
 	for {
@@ -43,9 +43,8 @@ func main() {
 			fmt.Println(err)
 			continue
 		}
-		clients[conn] = true // Register the client
+		clients[conn] = true
 
-		// Load chat history for the new client
 		loadChatHistory()
 
 		go handleClient(conn)
@@ -69,38 +68,28 @@ func loadUserData() {
 func handleClient(conn net.Conn) {
 	defer conn.Close()
 
-	clientAddr := conn.RemoteAddr().String()
-	fmt.Printf("Client %s connected.\n", clientAddr)
-
 	for {
 		message := make([]byte, 1024)
 		n, err := conn.Read(message)
 		if err != nil {
 			username, exists := connToUsername[conn]
 			if exists {
-				fmt.Printf("%s disconnected.\n", username)
-
-				// Update the user's isActive to false and LastSeen to the current time
 				userData := users[username]
 				userData["isActive"] = false
 				userData["LastSeen"] = time.Now().Format(time.RFC3339)
 				saveUserData()
-				// Remove the client connection from the map
+
+				delete(oneToOneConnections, username)
 				delete(connToUsername, conn)
-			} else {
-				fmt.Printf("An unidentified client disconnected.\n")
 			}
-			fmt.Printf("Client %s disconnected.\n", clientAddr)
 			delete(clients, conn)
 			return
 		}
 
 		msg := strings.TrimSpace(string(message[:n]))
 		if strings.HasPrefix(msg, "/signup") {
-			// Process signup
 			parts := strings.SplitN(msg, ":", 6)
 			if len(parts) != 6 {
-				fmt.Println("Invalid signup format")
 				continue
 			}
 			username := parts[1]
@@ -114,12 +103,10 @@ func handleClient(conn net.Conn) {
 				fmt.Fprintln(conn, "Username already exists. Please login or choose a different username.")
 			}
 		} else if strings.HasPrefix(msg, "/retrieveAllChat") {
-			// Retrieve all chat history
 			sendAllChatHistory(conn)
 		} else if strings.HasPrefix(msg, "/retrieveUserChat") {
 			parts := strings.SplitN(msg, ":", 2)
 			if len(parts) != 2 {
-				fmt.Println("Invalid username format")
 				continue
 			}
 			username := parts[1]
@@ -127,41 +114,70 @@ func handleClient(conn net.Conn) {
 		} else if strings.HasPrefix(msg, "/login") {
 			parts := strings.SplitN(msg, ":", 3)
 			if len(parts) != 3 {
-				fmt.Println("Invalid login format")
 				continue
 			}
 			username := parts[1]
 			password := parts[2]
-			if login(username, password) {
+			if login(username, password, conn) {
 				fmt.Fprintln(conn, "Login successful.")
-				fmt.Printf("%s is connected with IP %s.\n", username, clientAddr)
-
-				// Store the relation between the connection and the username
 				connToUsername[conn] = username
+				oneToOneConnections[username] = conn
 			} else {
 				fmt.Fprintln(conn, "Login failed. Please check your username and password or signup if you don't have an account.")
 			}
+
 		} else if strings.HasPrefix(msg, "/retrieveUserInformation") {
 			parts := strings.SplitN(msg, ":", 2)
 			if len(parts) != 2 {
-				fmt.Println("Invalid username format")
 				continue
 			}
 			username := parts[1]
 			retrieveUserInfo(conn, username)
+		} else if strings.HasPrefix(msg, "Private message to") {
+			parts := strings.SplitN(msg, ":", 2)
+			if len(parts) != 2 {
+				fmt.Fprintln(conn, "Invalid private message format. Use: 'Private message to <username>: <message>'")
+				return
+			}
+			recipientUsername := strings.TrimSpace(parts[0][18:])
+			flag := isPresentUser(recipientUsername, conn) // checking if reciever is present in databse or not
+			if flag{
+				handlePrivateChat(conn, msg, conn.RemoteAddr().String())
+			}else{
+				fmt.Fprintln(conn, "User Not Found,,,,,,,")
+			}
+			
 		} else {
 			parts := strings.SplitN(msg, ":", 2)
 			if len(parts) != 2 {
-				fmt.Println("Invalid message format")
 				continue
 			}
 			username := parts[0]
 			messageText := parts[1]
 			timestampedMsg := fmt.Sprintf("[%s] %s: %s", time.Now().Format(time.RFC3339), username, messageText)
-			saveToJSON(username, messageText, clientAddr)
+			saveToJSON(username, messageText, conn.RemoteAddr().String())
 			broadcast(timestampedMsg)
 		}
 	}
+}
+func handlePrivateChat(sender net.Conn, message string, clientAddr string) {
+	parts := strings.SplitN(message, ":", 2)
+	if len(parts) != 2 {
+		fmt.Fprintln(sender, "Invalid private message format. Use: 'Private message to <username>: <message>'")
+		return
+	}
+	recipientUsername := strings.TrimSpace(parts[0][18:])
+	if isPresentUser(recipientUsername, sender) {
+		savePrivateChat(connToUsername[sender], recipientUsername, parts[1], clientAddr, sender)
+		recipientConn, exists := oneToOneConnections[recipientUsername]
+		if exists {
+			privateMessage := fmt.Sprintf("Private message from %s: %s", connToUsername[sender], parts[1])
+			fmt.Fprintln(recipientConn, privateMessage)
+		}
+	}else{
+		fmt.Println("User not found")
+	}
+
 }
 
 func signup(username, password, fullname, bio, role string) bool {
@@ -169,19 +185,17 @@ func signup(username, password, fullname, bio, role string) bool {
 	if _, exists := users[username]; exists {
 		return false
 	}
-	hash, _ := HashPassword(password) 
-	// Get the current date and time
+	hash, _ := HashPassword(password)
 	signupDateTime := time.Now().Format(time.RFC3339)
 
-	// Save the user data
 	userData := map[string]interface{}{
 		"fullname":       fullname,
 		"password":       hash,
 		"bio":            bio,
 		"role":           role,
 		"signupDateTime": signupDateTime,
-		"isActive":       false, // Added isActive field
-		"LastSeen":       "",    // Added LastSeen field
+		"isActive":       false,
+		"LastSeen":       "",
 	}
 	users[username] = userData
 
@@ -189,30 +203,21 @@ func signup(username, password, fullname, bio, role string) bool {
 	return true
 }
 
-// func login(username, password string) bool {
-// 	if userData, exists := users[username]; exists {
-// 		if storedPassword, ok := userData["password"].(string); ok && storedPassword == password {
-// 			userData["isActive"] = true
-// 			userData["LastSeen"] = "" // Reset LastSeen
-// 			saveUserData()            // Save the updated user data
-// 			return true
-// 		}
-// 	}
-// 	return false
-// }
-
-func login(username, password string) bool {
+func login(username, password string, conn net.Conn) bool {
 	if userData, exists := users[username]; exists {
 		if storedPassword, ok := userData["password"].(string); ok && CheckPasswordHash(password, storedPassword) {
 			userData["isActive"] = true
-			userData["LastSeen"] = "" // Reset LastSeen
-			saveUserData() // Save the updated user data
+			userData["LastSeen"] = ""
+			saveUserData()
+
+			connToUsername[conn] = username
+			oneToOneConnections[username] = conn
+
 			return true
 		}
 	}
 	return false
 }
-
 
 func saveUserData() {
 	file, err := os.Create("userData.json")
@@ -374,4 +379,77 @@ func HashPassword(password string) (string, error) {
 func CheckPasswordHash(password, hash string) bool {
 	err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(password))
 	return err == nil
+}
+
+func savePrivateChat(sender, receiver, message, clientAddr string, conn net.Conn) {
+	// Sort the usernames to ensure consistent file naming
+	usernames := []string{sender, receiver}
+	sort.Strings(usernames)
+
+	filename := fmt.Sprintf("%s_%s_private_chat.json", usernames[0], usernames[1])
+
+	// Load the existing private chat data (if any)
+	privateChatData := make([]map[string]string, 0)
+
+	// Check if the file already exists
+	file, err := os.OpenFile(filename, os.O_RDWR|os.O_CREATE, os.ModeAppend)
+	if err == nil {
+		decoder := json.NewDecoder(file)
+		if err := decoder.Decode(&privateChatData); err != nil {
+			fmt.Println("Error decoding private chat file:", err)
+		}
+		file.Close()
+	}
+
+	// Create a new private chat message
+	chatMessage := map[string]string{
+		"time":      time.Now().Format(time.RFC3339),
+		"message":   message,
+		"sender":    sender,
+		"receiver":  receiver,
+		"ipAddress": clientAddr,
+	}
+
+	// Append the message to the private chat data
+	privateChatData = append(privateChatData, chatMessage)
+
+	// Overwrite the private chat file with the updated data
+	file, err = os.Create(filename)
+	if err != nil {
+		fmt.Println("Could not create or overwrite private chat file:", err)
+		return
+	}
+	defer file.Close()
+
+	// Encode and write the updated private chat data as JSON to the file
+	encoder := json.NewEncoder(file)
+	if err := encoder.Encode(privateChatData); err != nil {
+		fmt.Println("Error encoding private chat data:", err)
+		return
+	}
+}
+
+func isPresentUser(username string, conn net.Conn) bool {
+	// Open and read the JSON file
+	file, err := os.Open("userData.json")
+	if err != nil {
+		fmt.Println("Error opening file:", err)
+		return false
+	}
+	defer file.Close()
+
+	decoder := json.NewDecoder(file)
+	var userData map[string]interface{}
+	if err := decoder.Decode(&userData); err != nil {
+		fmt.Println("Error decoding JSON:", err)
+		return false
+	}
+
+	_, exists := userData[username]
+	if !exists {
+		fmt.Fprintln(conn, "User not found.")
+		return false
+	} else {
+		return true
+	}
 }

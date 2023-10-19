@@ -133,6 +133,7 @@ func main() {
 				fmt.Println("2.Retrieve All Chat by a User.")
 				fmt.Println("3.Retrieve User Info.")
 				fmt.Println("4.Chat With Other Users.")
+				fmt.Println("5.Chat With Specific User.")
 				fmt.Print("Enter Your Choice : ")
 
 				option, _ := reader.ReadString('\n')
@@ -164,10 +165,16 @@ func main() {
 					sendMessages(conn, username)
 					return
 
+				case "5":
+					// Private Chat
+					go readMessages(conn)
+					sendPrivateMessages(conn, username)
+					return
 				default:
 					fmt.Println("Invalid option. Please choose 1 for Signup, 2 for Login, or 3 to Quit.")
 				}
 			}
+
 		default:
 			fmt.Println("Invalid option. Please choose 1 for Signup, 2 for Login, or 3 to Quit.")
 		}
@@ -259,30 +266,6 @@ func retrieveUserInformation(conn net.Conn, username string) {
 	}
 }
 
-// func isValidPassword(password string) bool {
-// 	if len(password) < 8 {
-// 		return false
-// 	}
-
-// 	hasUpperCase := false
-// 	hasLowerCase := false
-// 	hasDigit := false
-// 	hasSpecialChar := false
-
-// 	for _, char := range password {
-// 		if unicode.IsUpper(char) {
-// 			hasUpperCase = true
-// 		} else if unicode.IsLower(char) {
-// 			hasLowerCase = true
-// 		} else if unicode.IsDigit(char) {
-// 			hasDigit = true
-// 		} else if !unicode.IsLetter(char) && !unicode.IsDigit(char) {
-// 			hasSpecialChar = true
-// 		}
-// 	}
-
-// 	return hasUpperCase && hasLowerCase && hasDigit && hasSpecialChar
-// }
 func isValidPassword(password string) bool {
 	secure := true
 	tests := []string{".{8,}", "[a-z]", "[A-Z]", "[0-9]", "[^\\d\\w]"}
@@ -299,4 +282,20 @@ func isValidPassword(password string) bool {
 		}
 	}
 	return secure
+}
+
+func sendPrivateMessages(conn net.Conn, username string) {
+	reader := bufio.NewReader(os.Stdin)
+	fmt.Print("Enter recipient's username: ")
+	recipient, _ := reader.ReadString('\n')
+	recipient = recipient[:len(recipient)-1] // Remove the newline character
+
+	for {
+		message, _ := reader.ReadString('\n')
+		message = message[:len(message)-1] // Remove the newline character
+
+		if message != "" {
+			fmt.Fprint(conn, "Private message to "+recipient+": "+message+"\n")
+		}
+	}
 }
