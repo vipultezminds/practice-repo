@@ -57,7 +57,5 @@ This Go code is a chat client that connects to a chat server over a TCP connecti
 9. **Private Messaging**:
    - Users can send and receive private messages. This involves separate functions for reading and sending private messages. The user is prompted to enter the recipient's username, and they can send messages back and forth privately.
 
-10. **Explanation of Functions**:
-    - The code also contains various functions to modularize different parts of the application, such as checking for a secure password, sending private messages, and reading private messages.
 
 This code is for a chat client that interacts with a chat server, allowing users to sign up, log in, and perform various chat-related operations. The code is structured to provide a user-friendly interface for interacting with the server, and it uses goroutines to handle asynchronous tasks like reading messages while allowing users to send messages. It also leverages regular expressions for secure password validation and parses JSON data from the server to display user information.
