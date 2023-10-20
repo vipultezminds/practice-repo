@@ -86,7 +86,6 @@ func handleClient(conn net.Conn) {
 				userData["isActive"] = false
 				userData["LastSeen"] = time.Now().Format(time.RFC3339)
 				saveUserData()
-
 				delete(oneToOneConnections, username)
 				delete(connToUsername, conn)
 			}
@@ -141,6 +140,13 @@ func handleClient(conn net.Conn) {
 			}
 			username := parts[1]
 			retrieveUserInfo(conn, username)
+		} else if strings.HasPrefix(msg, "/checkUserOnline") {
+			parts := strings.SplitN(msg, ":", 2)
+			if len(parts) != 2 {
+				continue
+			}
+			username := parts[1]
+			checkUserOnline(conn, username)
 		} else if strings.HasPrefix(msg, "Private message to") {
 			parts := strings.SplitN(msg, ":", 2)
 			if len(parts) != 2 {
@@ -515,5 +521,42 @@ func loadPrivateChats(sender, receiver string, conn net.Conn) {
 		fmt.Fprintf(conn, "[%s] %s: %s\n", chatTime, chatSender, chatMessageText)
 		fmt.Printf("[%s] %s: %s\n", chatTime, chatSender, chatMessageText)
 
+	}
+}
+func checkUserOnline(conn net.Conn, username string) {
+	// Open and read the userData.json file
+	file, err := os.Open("userData.json")
+	if err != nil {
+		fmt.Println("Error opening file:", err)
+		fmt.Fprintln(conn, "Error reading user data.")
+		return
+	}
+	defer file.Close()
+
+	decoder := json.NewDecoder(file)
+	var userData map[string]map[string]interface{}
+	if err := decoder.Decode(&userData); err != nil {
+		fmt.Println("Error decoding JSON:", err)
+		fmt.Fprintln(conn, "Error reading user data.")
+		return
+	}
+
+	userInfo, exists := userData[username]
+	if !exists {
+		fmt.Fprintln(conn, "User not found.")
+		return
+	}
+
+	isActive, isActiveExists := userInfo["isActive"].(bool)
+	lastSeen, lastSeenExists := userInfo["LastSeen"].(string)
+
+	if isActiveExists && isActive {
+		fmt.Fprintln(conn, "USER IS ONLINE")
+	} else {
+		if lastSeenExists {
+			fmt.Fprintf(conn, "USER IS OFFLINE \n(Last seen: %s)\n", lastSeen)
+		} else {
+			fmt.Fprintln(conn, "USER IS OFFLINE")
+		}
 	}
 }

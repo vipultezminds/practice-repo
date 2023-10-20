@@ -8,10 +8,8 @@ import (
 	"os"
 	"regexp"
 	"strings"
-	"syscall"
 
 	"gitlab.com/david_mbuvi/go_asterisks"
-	"golang.org/x/term"
 )
 
 type UserInfo struct {
@@ -66,15 +64,11 @@ func main() {
 				role = role[:len(role)-1] // Remove the newline character
 
 				for {
-					// fmt.Print("Enter your password: ")
-					// password, _ := reader.ReadString('\n')
-					// password = password[:len(password)-1] // Remove the newline character
-
-					bytePassword, err := term.ReadPassword(syscall.Stdin)
+					fmt.Print("Enter your password: ")
+					bytePassword, err := go_asterisks.GetUsersPassword("", true, os.Stdin, os.Stdout)
 					if err != nil {
-						panic(err)
+						fmt.Println(err.Error())
 					}
-
 					password := string(bytePassword)
 
 					if isValidPassword(password) {
@@ -132,9 +126,10 @@ func main() {
 				fmt.Print("Choose an option:\n1.RetrieveAllChat History\n")
 				fmt.Println("2.Retrieve All Chat by a User.")
 				fmt.Println("3.Retrieve User Info.")
-				fmt.Println("4.Chat With Other Users.")
+				fmt.Println("4.World Chat.")
 				fmt.Println("5.Chat With Specific User.")
 				fmt.Println("6.Load Chat with specific user.")
+				fmt.Println("Press CTRL + C to Logout")
 				fmt.Print("Enter Your Choice : ")
 
 				option, _ := reader.ReadString('\n')
@@ -177,10 +172,10 @@ func main() {
 					fmt.Print("Enter recipient's username: ")
 					recipient, _ := reader.ReadString('\n')
 					recipient = recipient[:len(recipient)-1] // Remove the newline character
-				
+
 					// Send a request to load the chat history with the specific user
 					fmt.Fprintf(conn, "/loaduserchathistory:%s\n", recipient)
-				
+
 					// Read and display the chat history
 					for {
 						message, err := bufio.NewReader(conn).ReadString('\n')
@@ -274,7 +269,7 @@ func retrieveUserInformation(conn net.Conn, username string) {
 		fmt.Println("Bio: ", userInfo.Bio)
 		fmt.Println("Role: ", userInfo.Role)
 
-		if userInfo.IsActive{
+		if userInfo.IsActive {
 			fmt.Println("IsActive: ", userInfo.IsActive)
 		} else {
 			fmt.Println("LastSeen: ", userInfo.LastSeen)
@@ -310,10 +305,11 @@ func sendPrivateMessages(conn net.Conn, username string) {
 	recipient, _ := reader.ReadString('\n')
 	recipient = recipient[:len(recipient)-1] // Remove the newline character
 
+	CheckOnline(conn,recipient)
+
 	for {
 		message, _ := reader.ReadString('\n')
 		message = message[:len(message)-1] // Remove the newline character
-
 		if message != "" {
 			fmt.Fprint(conn, "Private message to "+recipient+": "+message+"\n")
 		}
@@ -327,8 +323,12 @@ func readPrivateMessages(conn net.Conn) {
 			os.Exit(1)
 		}
 		// fmt.Print(message)
-		if !strings.HasPrefix(message,"World Chat:"){
+		if !strings.HasPrefix(message, "World Chat:") {
 			fmt.Println(message)
 		}
 	}
+}
+func CheckOnline(conn net.Conn, username string) {
+	// Send the request to the server
+	fmt.Fprintf(conn, "/checkUserOnline:%s\n", username)
 }
