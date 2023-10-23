@@ -551,13 +551,12 @@ func checkUserOnline(conn net.Conn, username string) {
 	lastSeen, lastSeenExists := userInfo["LastSeen"].(string)
 
 	if isActiveExists && isActive {
-		fmt.Fprintf(conn, "%s Is Online Now\n",username)
-		fmt.Fprintf(conn,">")
+		fmt.Fprintf(conn, "%s Is Online Now\n", username)
 	} else {
 		if lastSeenExists {
-			fmt.Fprintf(conn, "%s's OFFLINE \n(Last seen: %s)\n",username, lastSeen)
+			fmt.Fprintf(conn, "%s's OFFLINE \n(Last seen: %s)\n", username, lastSeen)
 		} else {
-			fmt.Fprintf(conn, "%s's OFFLINE",username)
+			fmt.Fprintf(conn, "%s's OFFLINE", username)
 		}
 	}
 }

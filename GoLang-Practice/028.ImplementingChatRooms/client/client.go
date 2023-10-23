@@ -11,8 +11,8 @@ import (
 	"runtime"
 	"strings"
 
-	"github.com/fatih/color"
 	"gitlab.com/david_mbuvi/go_asterisks"
+	tsize "github.com/kopoli/go-terminal-size"
 )
 
 type UserInfo struct {
@@ -304,10 +304,10 @@ func isValidPassword(password string) bool {
 	return secure
 }
 func CallClear() {
-	value, ok := clear[runtime.GOOS] //runtime.GOOS -> linux, windows, darwin etc.
-	if ok {                          //if we defined a clear func for that platform:
-		value() //we execute it
-	} else { //unsupported platform
+	value, ok := clear[runtime.GOOS]
+	if ok {
+		value()
+	} else {
 		panic("Your platform is unsupported! I can't clear terminal screen :(")
 	}
 }
@@ -330,12 +330,6 @@ func sendPrivateMessages(conn net.Conn, username string) {
 	CheckOnline(conn, recipient)
 
 	for {
-		// fmt.Print(">")
-		whilte := color.New(color.FgWhite)
-		boldWhite := whilte.Add(color.Bold)
-
-		boldWhite.Print(">")
-
 		message, _ := reader.ReadString('\n')
 		message = message[:len(message)-1] // Remove the newline character
 		if message != "" {
@@ -345,7 +339,6 @@ func sendPrivateMessages(conn net.Conn, username string) {
 }
 func readPrivateMessages(conn net.Conn) {
 	for {
-		fmt.Fprintf(conn, ">")
 		message, err := bufio.NewReader(conn).ReadString('\n')
 		if err != nil {
 			fmt.Println("Connection to the server has been closed.")
@@ -353,11 +346,32 @@ func readPrivateMessages(conn net.Conn) {
 		}
 		// if string contains world chat it won't let it print
 		if !strings.HasPrefix(message, "World Chat:") {
-			fmt.Println(message)
+			// fmt.Println(message)
+			printMessageAtRight(message)
 		}
 	}
 }
 func CheckOnline(conn net.Conn, username string) {
 	// Send the request to the server
 	fmt.Fprintf(conn, "/checkUserOnline:%s\n", username)
+}
+func printMessageAtRight(message string) {
+	size, err := tsize.GetSize()
+	if err != nil {
+		fmt.Println("Error:", err)
+		return
+	}
+
+	spaces := size.Width - len(message)
+	spaces = spaces - 33
+
+	if spaces > 0 {
+		for i := 0; i < spaces; i++ {
+			fmt.Print(" ")
+		}
+		fmt.Print(message)
+	} else {
+		fmt.Print(message)
+	}
+	fmt.Println() // Move to the next line
 }
