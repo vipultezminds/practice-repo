@@ -191,7 +191,7 @@ func handlePrivateChat(sender net.Conn, message string, clientAddr string) {
 		savePrivateChat(connToUsername[sender], recipientUsername, parts[1], clientAddr, sender)
 		recipientConn, exists := oneToOneConnections[recipientUsername]
 		if exists {
-			privateMessage := fmt.Sprintf("Private message from %s: %s", connToUsername[sender], parts[1])
+			privateMessage := fmt.Sprintf("\t\t\t\t\t %s", parts[1])
 			fmt.Fprintln(recipientConn, privateMessage)
 		}
 	} else {
@@ -551,12 +551,13 @@ func checkUserOnline(conn net.Conn, username string) {
 	lastSeen, lastSeenExists := userInfo["LastSeen"].(string)
 
 	if isActiveExists && isActive {
-		fmt.Fprintln(conn, "USER IS ONLINE")
+		fmt.Fprintf(conn, "%s Is Online Now\n",username)
+		fmt.Fprintf(conn,">")
 	} else {
 		if lastSeenExists {
-			fmt.Fprintf(conn, "USER IS OFFLINE \n(Last seen: %s)\n", lastSeen)
+			fmt.Fprintf(conn, "%s's OFFLINE \n(Last seen: %s)\n",username, lastSeen)
 		} else {
-			fmt.Fprintln(conn, "USER IS OFFLINE")
+			fmt.Fprintf(conn, "%s's OFFLINE",username)
 		}
 	}
 }

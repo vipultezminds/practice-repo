@@ -6,9 +6,12 @@ import (
 	"fmt"
 	"net"
 	"os"
+	"os/exec"
 	"regexp"
+	"runtime"
 	"strings"
 
+	"github.com/fatih/color"
 	"gitlab.com/david_mbuvi/go_asterisks"
 )
 
@@ -20,6 +23,8 @@ type UserInfo struct {
 	IsActive       bool   `json:"isActive"`
 	LastSeen       string `json:"LastSeen"`
 }
+
+var clear map[string]func() //create a map for storing clear funcs
 
 func main() {
 	fmt.Println("Chat client started.")
@@ -298,6 +303,14 @@ func isValidPassword(password string) bool {
 	}
 	return secure
 }
+func CallClear() {
+	value, ok := clear[runtime.GOOS] //runtime.GOOS -> linux, windows, darwin etc.
+	if ok {                          //if we defined a clear func for that platform:
+		value() //we execute it
+	} else { //unsupported platform
+		panic("Your platform is unsupported! I can't clear terminal screen :(")
+	}
+}
 
 func sendPrivateMessages(conn net.Conn, username string) {
 	reader := bufio.NewReader(os.Stdin)
@@ -305,9 +318,24 @@ func sendPrivateMessages(conn net.Conn, username string) {
 	recipient, _ := reader.ReadString('\n')
 	recipient = recipient[:len(recipient)-1] // Remove the newline character
 
-	CheckOnline(conn,recipient)
+	clear = make(map[string]func()) //Initialize it
+	clear["linux"] = func() {
+		cmd := exec.Command("clear") //Linux example, its tested
+		cmd.Stdout = os.Stdout
+		cmd.Run()
+	}
+
+	CallClear()
+
+	CheckOnline(conn, recipient)
 
 	for {
+		// fmt.Print(">")
+		whilte := color.New(color.FgWhite)
+		boldWhite := whilte.Add(color.Bold)
+
+		boldWhite.Print(">")
+
 		message, _ := reader.ReadString('\n')
 		message = message[:len(message)-1] // Remove the newline character
 		if message != "" {
@@ -317,12 +345,13 @@ func sendPrivateMessages(conn net.Conn, username string) {
 }
 func readPrivateMessages(conn net.Conn) {
 	for {
+		fmt.Fprintf(conn, ">")
 		message, err := bufio.NewReader(conn).ReadString('\n')
 		if err != nil {
 			fmt.Println("Connection to the server has been closed.")
 			os.Exit(1)
 		}
-		// fmt.Print(message)
+		// if string contains world chat it won't let it print
 		if !strings.HasPrefix(message, "World Chat:") {
 			fmt.Println(message)
 		}
