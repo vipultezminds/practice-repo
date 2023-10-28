@@ -6,7 +6,7 @@ import Dialog from '@mui/material/Dialog';
 import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
 import Typography from '@mui/material/Typography';
-import { TextField, Grid, Stack, Checkbox } from '@mui/material';
+import { TextField, Grid, Stack, Checkbox, Box } from '@mui/material';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import FormGroup from '@mui/material/FormGroup';
 
@@ -40,11 +40,24 @@ export const Signup = () => {
                 aria-labelledby="customized-dialog-title"
                 open={"close"}
                 sx={stackStyles}
+                PaperProps={{
+                    style:{
+                        borderRadius:16
+                    }
+                }}
 
             >
                 <DialogContent>
                     <DialogTitle textAlign={'center'}>
-                        <img src={logo} />
+                        <Box
+                            component="img"
+                            sx={{
+                                height: 29,
+                                width: 129,
+                            }}
+                            alt="TezMinds Logo"
+                            src="assets/tezminds_logo_1.png"
+                        />
                     </DialogTitle>
                     <Grid container direction="column" padding='0 42px' justify="center" width={'474px'}>
                         <Typography variant='h5' color='#0064D9' fontWeight='bold' fontFamily='Roboto' fontSize='22px' textAlign='center'>
@@ -105,10 +118,10 @@ export const Signup = () => {
                         >
                         </Typography>
                         <Stack sx={{
-                            margin:'16px 0 '
+                            margin: '16px 0 '
                         }}>
                             <FormGroup>
-                                <FormControlLabel fontFamily='roboto' control={<Checkbox/>} label={<Typography style={{ color: '#6B7584' }}>Agree with <Link href="#" color="inherit" style={{ textDecoration: 'none', color: 'black', }}>Terms & Condition</Link>.</Typography>} />
+                                <FormControlLabel fontFamily='roboto' control={<Checkbox />} label={<Typography style={{ color: '#6B7584' }}>Agree with <Link href="#" color="inherit" style={{ textDecoration: 'none', color: 'black', }}>Terms & Condition</Link>.</Typography>} />
                             </FormGroup>
                         </Stack>
                         <Button
@@ -130,7 +143,7 @@ export const Signup = () => {
                         }}>
                         </Typography>
 
-                        <Link href="#" fontFamily={"roboto"} color="#0064D9" style={{ textDecoration: 'none',textAlign:'center', margin:'20px 0', }}>Don’t have an account?</Link>
+                        <Link href="#" fontFamily={"roboto"} color="#0064D9" style={{ textDecoration: 'none', textAlign: 'center', margin: '20px 0', }}>Don’t have an account?</Link>
                     </Grid>
 
 
