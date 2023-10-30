@@ -189,7 +189,7 @@ function Navbar({handleDrawer,open}) {
 
 
     return (
-        <AppBar position="static" sx={{ bgcolor: '#f7fbff',boxShadow: 'rgba(0, 0, 0, 0.02) 0px 1px 3px 0px, rgba(27, 31, 35, 0.15) 0px 0px 0px 1px '}}>
+        <AppBar position="fixed" sx={{ bgcolor: '#f7fbff',boxShadow: 'rgba(0, 0, 0, 0.02) 0px 1px 3px 0px, rgba(27, 31, 35, 0.15) 0px 0px 0px 1px '}}>
             <Container maxWidth="xxl">
                 <Toolbar disableGutters>
                     <Stack display={'flex'} flexDirection={'row'} justifyContent={'space-between'} width={'100%'} >
