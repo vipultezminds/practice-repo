@@ -92,7 +92,7 @@ export const Signup = () => {
                         </Grid>
                         <TextField
                             id="outlined-basic"
-                            label="Email Address / Username"
+                            label="Email Address"
                             variant="outlined"
                             style={{
                                 width: '390px',
