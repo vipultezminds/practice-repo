@@ -600,6 +600,8 @@ const columns = [
   },
 ];
 
+let count = 0;
+
 const CustomerList = ({ isDashboardPage = true }) => {
   const [paginationModel, setPaginationModel] = useState({
     pageNo: 0,
@@ -611,6 +613,7 @@ const CustomerList = ({ isDashboardPage = true }) => {
     const fetchData = async () => {
       try {
         const data = await getAllUsers(paginationModel.pageNo * paginationModel.pageSize + 1, paginationModel.pageSize);
+        count = data.count;
         setUsers(data.records);
       } catch (error) {
         // Handle error
@@ -685,8 +688,8 @@ const CustomerList = ({ isDashboardPage = true }) => {
                   pageSize: paginationData.pageSize,
                 });
               }}
-              rowCount={100}
-              pageSizeOptions={[5, 10, 15, 20,100]}
+              rowCount={count}
+              pageSizeOptions={[3, 5, 10, 15, 20,100]}
               checkboxSelection
               sx={{
                 fontFamily: "Roboto, sans-serif",

@@ -13,12 +13,7 @@ export const getAllUsers = async (start,limit) => {
         },
     });
     const data = response.data;
-    // console.log(data)
-    // if (data.errorCode !== 0) {
-    //   alert(data.errorMessage)
-    //   throw new Error(data.errorMessage);
-    // }
-    // console.log(data.data)
+    
     return data.data;
   } catch (error) {
     throw error;
