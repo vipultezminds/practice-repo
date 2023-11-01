@@ -423,17 +423,18 @@ const CustomerList = ({ isDashboardPage = true }) => {
               getRowId={(row) => row.id}
 
               onPaginationModelChange={(paginationData) => {
-                setPagination({
-                  ...pagination,
+                setPagination((prevPagination) => ({
+                  ...prevPagination, // Merge with the previous state
                   page: paginationData.page,
-                  pageSize: paginationData.pageSize
-                })
+                  pageSize: paginationData.pageSize,
+                }));
               }}
               initialState={{
                 pagination: {
-                  paginationModel: { page: pagination.page, pageSize: pagination.pageSize },
+                  paginationModel: { page: 0, pageSize: 5 },
                 },
               }}
+              
               rowCount={100}
               pageSizeOptions={[3, 5, 10, 15, 20]}
               checkboxSelection
@@ -450,7 +451,6 @@ const CustomerList = ({ isDashboardPage = true }) => {
               style={{
                 borderStyle: "none",
               }}
-
             />
             {console.log(pagination.page + 1, pagination.pageSize, 'lowest console')}
           </Box>
