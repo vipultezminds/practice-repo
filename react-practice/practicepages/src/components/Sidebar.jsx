@@ -35,140 +35,272 @@ const options = [
 const dpURL = 'https://assets.pokemon.com/assets/cms2/img/pokedex/full/004.png'
 
 
-const columns = [
+const users =  [
     {
-        field: 'id', headerName: 'ID',
-        valueGetter: (params) =>
-            `# ${params.row.id || ''}`,
-    },
-    { field: 'firstName', headerName: 'First name', },
-    { field: 'lastName', headerName: 'Last name', },
-    {
-        field: 'age',
-        headerName: 'Age',
-        type: 'number',
-
-    },
-    {
-        field: 'fullName',
-        headerName: 'Full name',
-        description: 'This column has a value getter and is not sortable.',
-        sortable: false,
-        flex: 1,
-        // valueGetter: (params) =>
-        //     `${params.row.firstName || ''} ${params.row.lastName || ''}`,
-        renderCell: (params) => (
-            <Box style={{ display: 'flex', alignItems: 'center' }}>
-                <Avatar alt={`${params.row.firstName} ${params.row.lastName}`} src={dpURL} />
-                <Typography variant="body1" style={{ marginLeft: '8px' }}>
-                    {params.row.firstName} {params.row.lastName}
-                </Typography>
-            </Box>),
+        "id": 1,
+        "username": "Kaushal",
+        "fullname": "Kaushal Vishwakarma",
+        "isactive": false,
+        "lastseen": "2023-10-31T06:49:56Z",
+        "created_at": "2023-10-31 12:19:56",
+        "mobile_no": 9369591287,
+        "bio": "Developer",
+        "gender": "Male",
+        "updated_at": "2023-10-31 12:19:56"
     },
     {
-        field: 'contactDetails',
-        headerName: 'Contact Details',
-        description: 'This column has a value getter and is not sortable.',
-        sortable: false,
-        width: 150,
-        valueGetter: (params) =>
-            `${params.row.mobile || ''}`,
+        "id": 4,
+        "username": "Naveen",
+        "fullname": "Naveen Sharma",
+        "isactive": false,
+        "lastseen": "2023-10-31T07:10:17Z",
+        "created_at": "2023-10-31 12:40:18",
+        "mobile_no": 9369591217,
+        "bio": "Backend Developer",
+        "gender": "Male",
+        "updated_at": "2023-10-31 12:40:18"
     },
     {
-        field: 'email',
-        headerName: 'Email',
-        description: 'This column has a value getter and is not sortable.',
-        sortable: false,
-        // flex: 1,
-        width: 300,
-        valueGetter: (params) =>
-            `${params.row.email || ''}`,
+        "id": 5,
+        "username": "Vipul",
+        "fullname": "Vipul Kumar",
+        "isactive": false,
+        "lastseen": "2023-10-31T07:10:59Z",
+        "created_at": "2023-10-31 12:40:59",
+        "mobile_no": 9369591219,
+        "bio": "Frontend Developer",
+        "gender": "Male",
+        "updated_at": "2023-10-31 12:40:59"
     },
     {
-        field: 'actions',
-        headerName: 'Actions',
-        sortable: false,
-        width: 60,
-        renderCell: (params) => (
-            <div>
-                <IconButton
-                    aria-label="more"
-                    id="long-button"
-                    aria-haspopup="true"
-                // onClick={handleClick}
-                >
-                    <MoreVertIcon />
-                </IconButton>
-                <Menu
-
-                >
-                    {options.map((option) => (
-                        <MenuItem key={option} selected={option === 'Pyxis'} >
-                            {option}
-                        </MenuItem>
-                    ))}
-                </Menu>
-            </div>
-        ),
+        "id": 6,
+        "username": "Shubham",
+        "fullname": "Shubham Sapkal",
+        "isactive": false,
+        "lastseen": "2023-10-31T07:11:40Z",
+        "created_at": "2023-10-31 12:41:41",
+        "mobile_no": 8668430600,
+        "bio": "Frontend Developer",
+        "gender": "Male",
+        "updated_at": "2023-10-31 18:40:13"
     },
-
-
-];
-
-const rows = [
-    { id: 1, lastName: 'Smith', firstName: 'John', age: 32, mobile: '555-111-1111', email: 'john.smith@example.com' },
-    { id: 2, lastName: 'Johnson', firstName: 'Sarah', age: 28, mobile: '555-222-2222', email: 'sarah.johnson@example.com' },
-    { id: 3, lastName: 'Williams', firstName: 'Michael', age: 45, mobile: '555-333-3333', email: 'michael.williams@example.com' },
-    { id: 4, lastName: 'Brown', firstName: 'Emily', age: 26, mobile: '555-444-4444', email: 'emily.brown@example.com' },
-    { id: 5, lastName: 'Jones', firstName: 'David', age: 38, mobile: '555-555-5555', email: 'david.jones@example.com' },
-    { id: 6, lastName: 'Davis', firstName: 'Anna', age: 31, mobile: '555-666-6666', email: 'anna.davis@example.com' },
-    { id: 7, lastName: 'Miller', firstName: 'Matthew', age: 40, mobile: '555-777-7777', email: 'matthew.miller@example.com' },
-    { id: 8, lastName: 'Wilson', firstName: 'Olivia', age: 27, mobile: '555-888-8888', email: 'olivia.wilson@example.com' },
-    { id: 9, lastName: 'Moore', firstName: 'James', age: 50, mobile: '555-999-9999', email: 'james.moore@example.com' },
-    { id: 10, lastName: 'Taylor', firstName: 'Sophia', age: 35, mobile: '555-101-0101', email: 'sophia.taylor@example.com' },
-    { id: 11, lastName: 'Anderson', firstName: 'William', age: 48, mobile: '555-202-0202', email: 'william.anderson@example.com' },
-    { id: 12, lastName: 'Harris', firstName: 'Ava', age: 29, mobile: '555-303-0303', email: 'ava.harris@example.com' },
-    { id: 13, lastName: 'Jackson', firstName: 'Daniel', age: 33, mobile: '555-404-0404', email: 'daniel.jackson@example.com' },
-    { id: 14, lastName: 'White', firstName: 'Liam', age: 34, mobile: '555-505-0505', email: 'liam.white@example.com' },
-    { id: 15, lastName: 'Martinez', firstName: 'Mia', age: 24, mobile: '555-606-0606', email: 'mia.martinez@example.com' },
-    { id: 16, lastName: 'Jones', firstName: 'Ethan', age: 37, mobile: '555-707-0707', email: 'ethan.jones@example.com' },
-    { id: 17, lastName: 'Lee', firstName: 'Lily', age: 30, mobile: '555-808-0808', email: 'lily.lee@example.com' },
-    { id: 18, lastName: 'Garcia', firstName: 'Samuel', age: 42, mobile: '555-909-0909', email: 'samuel.garcia@example.com' },
-    { id: 19, lastName: 'Davis', firstName: 'Sophia', age: 31, mobile: '555-101-0101', email: 'sophia.davis@example.com' },
-    { id: 20, lastName: 'Hernandez', firstName: 'Daniel', age: 39, mobile: '555-111-1111', email: 'daniel.hernandez@example.com' },
-    { id: 21, lastName: 'Brown', firstName: 'Olivia', age: 44, mobile: '555-121-2121', email: 'olivia.brown@example.com' },
-    { id: 22, lastName: 'Wilson', firstName: 'Benjamin', age: 35, mobile: '555-131-3131', email: 'benjamin.wilson@example.com' },
-    { id: 23, lastName: 'Clark', firstName: 'Sophia', age: 28, mobile: '555-141-4141', email: 'sophia.clark@example.com' },
-    { id: 24, lastName: 'Hall', firstName: 'Ethan', age: 47, mobile: '555-151-5151', email: 'ethan.hall@example.com' },
-    { id: 25, lastName: 'Young', firstName: 'Isabella', age: 32, mobile: '555-161-6161', email: 'isabella.young@example.com' },
-    { id: 26, lastName: 'Harris', firstName: 'Aiden', age: 36, mobile: '555-171-7171', email: 'aiden.harris@example.com' },
-    { id: 27, lastName: 'Thomas', firstName: 'Emma', age: 25, mobile: '555-181-8181', email: 'emma.thomas@example.com' },
-    { id: 28, lastName: 'Harris', firstName: 'Mason', age: 29, mobile: '555-191-9191', email: 'mason.harris@example.com' },
-    { id: 29, lastName: 'Wright', firstName: 'Olivia', age: 30, mobile: '555-202-0202', email: 'olivia.wright@example.com' },
-    { id: 30, lastName: 'Scott', firstName: 'Lucas', age: 33, mobile: '555-212-1212', email: 'lucas.scott@example.com' },
-    { id: 31, lastName: 'King', firstName: 'Charlotte', age: 36, mobile: '555-222-2222', email: 'charlotte.king@example.com' },
-    { id: 32, lastName: 'Ward', firstName: 'Ethan', age: 31, mobile: '555-232-3232', email: 'ethan.ward@example.com' },
-    { id: 33, lastName: 'Baker', firstName: 'Ava', age: 29, mobile: '555-242-4242', email: 'ava.baker@example.com' },
-    { id: 34, lastName: 'Gonzalez', firstName: 'Liam', age: 43, mobile: '555-252-5252', email: 'liam.gonzalez@example.com' },
-    { id: 35, lastName: 'Roberts', firstName: 'Sophia', age: 27, mobile: '555-262-6262', email: 'sophia.roberts@example.com' },
-    { id: 36, lastName: 'Lee', firstName: 'Mason', age: 34, mobile: '555-272-7272', email: 'mason.lee@example.com' },
-    { id: 37, lastName: 'Garcia', firstName: 'Aria', age: 35, mobile: '555-282-8282', email: 'aria.garcia@example.com' },
-    { id: 38, lastName: 'Davis', firstName: 'Oliver', age: 40, mobile: '555-292-9292', email: 'oliver.davis@example.com' },
-    { id: 39, lastName: 'Rodriguez', firstName: 'Emma', age: 32, mobile: '555-303-0303', email: 'emma.rodriguez@example.com' },
-    { id: 40, lastName: 'Hernandez', firstName: 'Ethan', age: 39, mobile: '555-313-1313', email: 'ethan.hernandez@example.com' },
-    { id: 41, lastName: 'Smith', firstName: 'Olivia', age: 28, mobile: '555-323-2323', email: 'olivia.smith@example.com' },
-    { id: 42, lastName: 'Young', firstName: 'Noah', age: 31, mobile: '555-333-3333', email: 'noah.young@example.com' },
-    { id: 43, lastName: 'Hall', firstName: 'Ava', age: 29, mobile: '555-343-4343', email: 'ava.hall@example.com' },
-    { id: 44, lastName: 'Johnson', firstName: 'Liam', age: 33, mobile: '555-353-5353', email: 'liam.johnson@example.com' },
-    { id: 45, lastName: 'Clark', firstName: 'Mia', age: 30, mobile: '555-363-6363', email: 'mia.clark@example.com' },
-    { id: 46, lastName: 'Martin', firstName: 'Benjamin', age: 37, mobile: '555-373-7373', email: 'benjamin.martin@example.com' },
-    { id: 47, lastName: 'Wright', firstName: 'Isabella', age: 35, mobile: '555-383-8383', email: 'isabella.wright@example.com' },
-    { id: 48, lastName: 'Taylor', firstName: 'Mason', age: 32, mobile: '555-393-9393', email: 'mason.taylor@example.com' },
-    { id: 49, lastName: 'Martinez', firstName: 'Olivia', age: 40, mobile: '555-404-0404', email: 'olivia.martinez@example.com' },
-    { id: 50, lastName: 'Adams', firstName: 'Ethan', age: 38, mobile: '555-414-1414', email: 'ethan.adams@example.com' },
-];
-
-
+    {
+        "id": 7,
+        "username": "Abhishek",
+        "fullname": "Abhishek Sir",
+        "isactive": false,
+        "lastseen": "2023-10-31T07:13:00Z",
+        "created_at": "2023-10-31 12:43:01",
+        "mobile_no": 9469591210,
+        "bio": "Senior Software Developer",
+        "gender": "Male",
+        "updated_at": "2023-10-31 18:17:34"
+    },
+    {
+        "id": 33,
+        "username": "JohnDoe",
+        "fullname": "John Doe",
+        "isactive": false,
+        "lastseen": "2023-10-31T13:27:57Z",
+        "created_at": "2023-10-31 18:57:57",
+        "mobile_no": 9876543210,
+        "bio": "Web Developer",
+        "gender": "Male",
+        "updated_at": "2023-10-31 18:57:57"
+    },
+    {
+        "id": 34,
+        "username": "EmilySmith",
+        "fullname": "Emily Smith",
+        "isactive": false,
+        "lastseen": "2023-10-31T13:28:04Z",
+        "created_at": "2023-10-31 18:58:05",
+        "mobile_no": 7890123456,
+        "bio": "Graphic Designer",
+        "gender": "Female",
+        "updated_at": "2023-10-31 18:58:05"
+    },
+    {
+        "id": 35,
+        "username": "AlexJohnson",
+        "fullname": "Alex Johnson",
+        "isactive": false,
+        "lastseen": "2023-10-31T13:28:12Z",
+        "created_at": "2023-10-31 18:58:13",
+        "mobile_no": 1234567890,
+        "bio": "Data Scientist",
+        "gender": "Male",
+        "updated_at": "2023-10-31 18:58:13"
+    },
+    {
+        "id": 36,
+        "username": "SarahBrown",
+        "fullname": "Sarah Brown",
+        "isactive": false,
+        "lastseen": "2023-10-31T13:28:20Z",
+        "created_at": "2023-10-31 18:58:20",
+        "mobile_no": 2345678901,
+        "bio": "UI/UX Designer",
+        "gender": "Female",
+        "updated_at": "2023-10-31 18:58:20"
+    },
+    {
+        "id": 37,
+        "username": "MichaelLee",
+        "fullname": "Michael Lee",
+        "isactive": false,
+        "lastseen": "2023-10-31T13:28:35Z",
+        "created_at": "2023-10-31 18:58:35",
+        "mobile_no": 3456789012,
+        "bio": "Product Manager",
+        "gender": "Male",
+        "updated_at": "2023-10-31 18:58:35"
+    },
+    {
+        "id": 38,
+        "username": "AmandaWilson",
+        "fullname": "Amanda Wilson",
+        "isactive": false,
+        "lastseen": "2023-10-31T13:28:46Z",
+        "created_at": "2023-10-31 18:58:47",
+        "mobile_no": 4567890123,
+        "bio": "Marketing Specialist",
+        "gender": "Female",
+        "updated_at": "2023-10-31 18:58:47"
+    },
+    {
+        "id": 39,
+        "username": "DanielClark",
+        "fullname": "Daniel Clark",
+        "isactive": false,
+        "lastseen": "2023-10-31T13:28:53Z",
+        "created_at": "2023-10-31 18:58:54",
+        "mobile_no": 5678901234,
+        "bio": "Software Engineer",
+        "gender": "Male",
+        "updated_at": "2023-10-31 18:58:54"
+    },
+    {
+        "id": 40,
+        "username": "JessicaThomas",
+        "fullname": "Jessica Thomas",
+        "isactive": false,
+        "lastseen": "2023-10-31T13:29:00Z",
+        "created_at": "2023-10-31 18:59:01",
+        "mobile_no": 6789012345,
+        "bio": "Content Writer",
+        "gender": "Female",
+        "updated_at": "2023-10-31 18:59:01"
+    },
+    {
+        "id": 42,
+        "username": "OliviaSmith",
+        "fullname": "Olivia Smith",
+        "isactive": false,
+        "lastseen": "2023-10-31T13:29:31Z",
+        "created_at": "2023-10-31 18:59:31",
+        "mobile_no": 8901234567,
+        "bio": "Graphic Designer",
+        "gender": "Female",
+        "updated_at": "2023-10-31 18:59:31"
+    },
+    {
+        "id": 43,
+        "username": "WilliamJohnson",
+        "fullname": "William Johnson",
+        "isactive": false,
+        "lastseen": "2023-10-31T13:29:51Z",
+        "created_at": "2023-10-31 18:59:51",
+        "mobile_no": 9012345678,
+        "bio": "Data Analyst",
+        "gender": "Male",
+        "updated_at": "2023-10-31 18:59:51"
+    },
+    {
+        "id": 45,
+        "username": "EmmaDavis",
+        "fullname": "Emma Davis",
+        "isactive": false,
+        "lastseen": "2023-10-31T13:30:07Z",
+        "created_at": "2023-10-31 19:00:07",
+        "mobile_no": 1234569890,
+        "bio": "UX Designer",
+        "gender": "Female",
+        "updated_at": "2023-10-31 19:00:07"
+    },
+    {
+        "id": 47,
+        "username": "JamesMiller",
+        "fullname": "James Miller",
+        "isactive": false,
+        "lastseen": "2023-10-31T13:37:14Z",
+        "created_at": "2023-10-31 19:07:14",
+        "mobile_no": 2345679901,
+        "bio": "Frontend Developer",
+        "gender": "Male",
+        "updated_at": "2023-10-31 19:07:14"
+    },
+    {
+        "id": 49,
+        "username": "SophiaWhite",
+        "fullname": "Sophia White",
+        "isactive": false,
+        "lastseen": "2023-10-31T13:37:43Z",
+        "created_at": "2023-10-31 19:07:44",
+        "mobile_no": 3456789312,
+        "bio": "Marketing Manager",
+        "gender": "Female",
+        "updated_at": "2023-10-31 19:07:44"
+    },
+    {
+        "id": 51,
+        "username": "LiamTaylor",
+        "fullname": "Liam Taylor",
+        "isactive": false,
+        "lastseen": "2023-10-31T13:38:23Z",
+        "created_at": "2023-10-31 19:08:24",
+        "mobile_no": 4567890193,
+        "bio": "Software Developer",
+        "gender": "Male",
+        "updated_at": "2023-10-31 19:08:24"
+    },
+    {
+        "id": 53,
+        "username": "AmeliaHill",
+        "fullname": "Amelia Hill",
+        "isactive": false,
+        "lastseen": "2023-10-31T13:38:41Z",
+        "created_at": "2023-10-31 19:08:42",
+        "mobile_no": 5378901234,
+        "bio": "Content Creator",
+        "gender": "Female",
+        "updated_at": "2023-10-31 19:08:42"
+    },
+    {
+        "id": 55,
+        "username": "BenjaminYoung",
+        "fullname": "Benjamin Young",
+        "isactive": false,
+        "lastseen": "2023-10-31T13:38:58Z",
+        "created_at": "2023-10-31 19:08:59",
+        "mobile_no": 6789012349,
+        "bio": "Backend Developer",
+        "gender": "Male",
+        "updated_at": "2023-10-31 19:08:59"
+    },
+    {
+        "id": 57,
+        "username": "ChloeKing",
+        "fullname": "Chloe King",
+        "isactive": false,
+        "lastseen": "2023-10-31T13:39:31Z",
+        "created_at": "2023-10-31 19:09:31",
+        "mobile_no": 7890123458,
+        "bio": "UI Designer",
+        "gender": "Female",
+        "updated_at": "2023-10-31 19:09:31"
+    }
+]
 
 const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open' })(
     ({ theme, open }) => ({
@@ -247,7 +379,7 @@ export default function Sidebar({ handleDrawer, open, theme }) {
                 <Main open={open}>
                     <Routes>
                         <Route exact path="/dashboard" element={<Dashboard />} />
-                        <Route exact path="/customer-list" element={<CustomerList rows={rows} columns={columns} />} />
+                        <Route exact path="/customer-list" element={<CustomerList />} />
                         {/* <Route path="/settings" element={<Settings/>} /> */}
                         {/* Define routes for ContactUs and Pricing components here */}
                     </Routes>
