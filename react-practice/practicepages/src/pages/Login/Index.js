@@ -8,7 +8,7 @@ import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
 import Typography from '@mui/material/Typography';
 import { TextField, Grid, Box } from '@mui/material';
-import { login } from '../../services/api';
+import { api } from '../../services/api';
 
 const backgroundImageUrl = "assets/bg_image_1.png";
 
@@ -35,7 +35,7 @@ export const Login = () => {
     const handleLogin = async () => {
         try {
             // Call the login function with the username and password
-            const token = await login(username, password);
+            const token = await api.login(username, password);
             // Handle the token (e.g., store it in a state or a cookie)
             console.log('Token:', token);
             localStorage.setItem('authtoken',token)

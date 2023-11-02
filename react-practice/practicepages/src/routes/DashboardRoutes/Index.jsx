@@ -1,25 +1,17 @@
-import { Signup } from "../../pages/Signup/Index"
 import { Dashboard } from "../../pages/Dashboard/Index"
 import CustomerList from "../../pages/CustomerList/Index.js"
-import { Login } from "../../pages/Login/Index"
+import { DASHBOARD,CUSTOMERLIST} from "../../config/config"
+
 
 import { useRoutes } from "react-router-dom";
 
 const dashboard = [
   {
-    path: "/signup",
-    element: <Signup />,
-  },
-  {
-    path: "/",
-    element: <Login />,
-  },
-  {
-    path: "/dashboard",
+    path: DASHBOARD,
     element: <Dashboard />,
   },
   {
-    path: "/customer-list",
+    path: CUSTOMERLIST,
     element: <CustomerList />,
   },
 ];

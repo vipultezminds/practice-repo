@@ -7,7 +7,7 @@ import { DataGrid } from "@mui/x-data-grid";
 import Divider from "@mui/material/Divider";
 import Typography from "@mui/material/Typography";
 import { Link } from "react-router-dom";
-import { getAllUsers } from '../../services/api';
+import { api } from '../../services/api';
 import Avatar from '@mui/material/Avatar';
 import IconButton from '@mui/material/IconButton';
 import Menu from '@mui/material/Menu';
@@ -103,7 +103,7 @@ const CustomerList = ({ isDashboardPage = true }) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const data = await getAllUsers(paginationModel.pageNo * paginationModel.pageSize + 1, paginationModel.pageSize);
+        const data = await api.getAllUsers(paginationModel.pageNo * paginationModel.pageSize + 1, paginationModel.pageSize);
         count = data.count;
         setUsers(data.records);
       } catch (error) {
