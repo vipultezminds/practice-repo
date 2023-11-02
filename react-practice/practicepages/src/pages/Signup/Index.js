@@ -11,8 +11,6 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import FormGroup from '@mui/material/FormGroup';
 
 
-
-const logo = "assets/tezminds_logo_1.png"
 const backgroundImageUrl = "assets/bg_image_1.png";
 
 const stackStyles = {
@@ -22,7 +20,6 @@ const stackStyles = {
     width: '100%',
 };
 
-const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
     '& .MuiDialogContent-root': {
