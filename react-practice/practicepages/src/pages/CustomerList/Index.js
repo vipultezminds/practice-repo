@@ -103,17 +103,31 @@ const CustomerList = ({ isDashboardPage = true }) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const data = await api.getAllUsers(paginationModel.pageNo * paginationModel.pageSize + 1, paginationModel.pageSize);
-        count = data.count;
-        setUsers(data.records);
+        const start = paginationModel.pageNo * paginationModel.pageSize + 1;
+        api.getAllUsers(
+          start,
+          paginationModel.pageSize,
+          (data) => {
+            if (data && data.records) {
+              count = data.count;
+              setUsers(data.records);
+            } else {
+              // Handle the case where the data is not as expected
+              console.log('Invalid data received from the server.');
+            }
+          },
+          (error) => {
+            console.log(error);
+          }
+        );
       } catch (error) {
-        console.log(error)
+        console.log(error);
       }
     };
-
+  
     fetchData();
   }, [paginationModel]);
-
+  
 
 
   return (

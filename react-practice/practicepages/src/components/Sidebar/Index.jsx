@@ -60,7 +60,7 @@ export default function Sidebar({ open }) {
             >
                 <Divider />
                 <Stack>
-                    <List margin>
+                    <List>
                         {[
                             { text: 'Dashboard', icon: <DashboardIcon />, path: '/dashboard' },
                             { text: 'Customer List', icon: <PeopleOutlinedIcon />, path: '/customer-list' },

@@ -6,11 +6,11 @@ import { SIGNUP,LOGIN} from "../../config/config"
 
 const landingPage = [
   {
-    path: LOGIN,
+    path: SIGNUP,
     element: <Signup />,
   },
   {
-    path: SIGNUP,
+    path: LOGIN,
     element: <Login />,
   },
 ];

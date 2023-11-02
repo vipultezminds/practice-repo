@@ -71,7 +71,7 @@ function Navbar({handleDrawer,open}) {
                                 size="large"
                                 aria-label="show 17 new notifications"
                                 color="black"
-                                margin="30px"
+                                margin={30}
                             >
                                     <Badge badgeContent={17} color="error">
                                         <NotificationsIcon />
