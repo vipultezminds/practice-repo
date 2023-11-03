@@ -15,7 +15,7 @@ import DashboardIcon from '@mui/icons-material/Dashboard';
 import PeopleOutlinedIcon from '@mui/icons-material/PeopleOutlined';
 import AttachMoneyOutlinedIcon from '@mui/icons-material/AttachMoneyOutlined';
 import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined';
-import AllRoutes from '../../routes/DashboardRoutes/Index';
+import AppRoutes from '../../routes/Index';
 const drawerWidth = 240;
 
 
@@ -92,7 +92,7 @@ export default function Sidebar({ open }) {
                 </List>
             </Drawer>
             <Main open={open}>
-                <AllRoutes />
+                <AppRoutes />
             </Main>
         </Box>
     );

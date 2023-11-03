@@ -104,9 +104,10 @@ const CustomerList = ({ isDashboardPage = true }) => {
     const fetchData = async () => {
       try {
         const start = paginationModel.pageNo * paginationModel.pageSize + 1;
+        const limit = paginationModel.pageSize;
         api.getAllUsers(
           start,
-          paginationModel.pageSize,
+          limit,
           (data) => {
             if (data && data.records) {
               count = data.count;
@@ -196,14 +197,14 @@ const CustomerList = ({ isDashboardPage = true }) => {
                 fontFamily: "Roboto, sans-serif",
                 color: "#6B7584",
                 "& .MuiDataGrid-cell, .MuiDataGrid-columnHeaders , .MuiDataGrid-root": {
-                  borderStyle: "none",
+                  // borderStyle: "none",
                 },
                 "& .MuiDataGrid-footerContainer": {
                   display: isDashboardPage ? "block" : "none",
                 },
               }}
               style={{
-                borderStyle: "none",
+                // borderStyle: "none",
               }}
             />
           </Box>

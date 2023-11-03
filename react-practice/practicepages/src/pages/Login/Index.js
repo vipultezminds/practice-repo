@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useState } from 'react'; // Import useState
 import Button from '@mui/material/Button';
-import Link from '@mui/material/Link';
+import { Link } from 'react-router-dom';
 import { styled } from '@mui/material/styles';
 import Dialog from '@mui/material/Dialog';
 import DialogTitle from '@mui/material/DialogTitle';
@@ -38,8 +38,8 @@ export const Login = () => {
             const token = await api.login(username, password);
             // Handle the token (e.g., store it in a state or a cookie)
             console.log('Token:', token);
-            localStorage.setItem('authtoken',token)
-            if(token){
+            localStorage.setItem('authtoken', token)
+            if (token) {
                 window.location.href = './dashboard'
             }
         } catch (error) {
@@ -135,10 +135,9 @@ export const Login = () => {
                             marginTop: '35px',
                             color: '#0064D9',
                         }}>
-                            <Link href="#" color="inherit" style={{
-                                textDecoration: 'none',
-                                fontFamily: 'Roboto',
-                            }}>Don’t have an account?</Link>
+                            <Link to="/signup" style={{ textDecoration: 'none', cursor: 'pointer', fontFamily: 'Roboto', color: 'inherit' }}>
+                                Already have a account?
+                            </Link>
                         </Typography>
                     </Grid>
                 </DialogContent>

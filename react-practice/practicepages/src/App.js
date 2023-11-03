@@ -3,7 +3,7 @@ import { BrowserRouter as Router } from 'react-router-dom';
 import Navbar from './components/Navbar/Index';
 import Sidebar from './components/Sidebar/Index';
 import { useTheme } from '@mui/material';
-import { ThemeProvider, createTheme } from '@mui/material/styles';
+import { ThemeProvider } from '@mui/material/styles';
 import { commonTheme } from "./theme/index"
 
 function App() {

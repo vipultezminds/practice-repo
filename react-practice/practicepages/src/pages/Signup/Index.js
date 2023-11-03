@@ -1,6 +1,6 @@
 import * as React from 'react';
 import Button from '@mui/material/Button';
-import Link from '@mui/material/Link';
+import {Link} from 'react-router-dom';
 import { styled } from '@mui/material/styles';
 import Dialog from '@mui/material/Dialog';
 import DialogTitle from '@mui/material/DialogTitle';
@@ -140,10 +140,8 @@ export const Signup = () => {
                         }}>
                         </Typography>
 
-                        <Link href="#" fontFamily={"roboto"} color="#0064D9" style={{ textDecoration: 'none', textAlign: 'center', margin: '20px 0', }}>Don’t have an account?</Link>
+                        <Link to='/' fontFamily={"roboto"} color="#0064D9" style={{ textDecoration: 'none', textAlign: 'center', margin: '20px 0',color:'#0064D9', fontWeight:'bold' }}>Don’t have an account?</Link>
                     </Grid>
-
-
                 </DialogContent>
             </BootstrapDialog>
         </div>
