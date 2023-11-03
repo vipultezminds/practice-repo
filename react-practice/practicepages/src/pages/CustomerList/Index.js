@@ -99,6 +99,7 @@ const CustomerList = ({ isDashboardPage = true }) => {
     pageSize: 5,
   });
   const [users, setUsers] = useState([]);
+  const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
     const fetchData = async () => {
@@ -108,6 +109,7 @@ const CustomerList = ({ isDashboardPage = true }) => {
         api.getAllUsers(
           start,
           limit,
+          searchQuery,
           (data) => {
             if (data && data.records) {
               count = data.count;
@@ -127,7 +129,7 @@ const CustomerList = ({ isDashboardPage = true }) => {
     };
   
     fetchData();
-  }, [paginationModel]);
+  }, [paginationModel,searchQuery]);
   
 
 
@@ -174,6 +176,8 @@ const CustomerList = ({ isDashboardPage = true }) => {
                   </InputAdornment>
                 ),
               }}
+              value={searchQuery}
+              onInput={(e) => setSearchQuery(e.target.value)}
             />
           )}
           <Box width={"98%"} marginTop={3}>

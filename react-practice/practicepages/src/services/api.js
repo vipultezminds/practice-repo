@@ -2,9 +2,10 @@ import axios from 'axios';
 import { API_BASE_URL, AUTH_TOKEN } from '../config/config';
 
 export const api = {
-  getAllUsers: async (start, limit, successCallback, errorCallback) => {
+  getAllUsers: async (start, limit,searchQuery, successCallback, errorCallback) => {
     try {
-      const response = await axios.get(`${API_BASE_URL}/users?start=${start}&limit=${limit}`, {
+      // console.log(searchQuery)
+      const response = await axios.get(`${API_BASE_URL}/users?start=${start}&limit=${limit}&search=${searchQuery}`, {
         headers: {
           Authorization: `Bearer ${AUTH_TOKEN}`,
           "Content-Type": "application/json",
