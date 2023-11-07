@@ -22,10 +22,10 @@ const options = [
 
 const columns = [
   {
-    field: 'id', headerName: 'ID',
+    field: 'userid', headerName: 'ID',
     // width: 90,
     valueGetter: (params) =>
-      `# ${params.row.id || ''}`,
+      `# ${params.row.userid || ''}`,
   },
   {
     field: 'updated_at',
@@ -41,9 +41,9 @@ const columns = [
     width:300,
     renderCell: (params) => (
       <Box style={{ display: 'flex', alignItems: 'center' }}>
-        <Avatar alt={`${params.row.firstName} ${params.row.lastName}`} src={dpURL} />
+        <Avatar alt={`${params.row.firstname} ${params.row.lastname}`} src={dpURL} />
         <Typography variant="body1" style={{ marginLeft: '8px' }}>
-          {params.row.fullname}
+          {params.row.firstname} {params.row.lastname}
         </Typography>
       </Box>),
   },
@@ -54,16 +54,16 @@ const columns = [
     sortable: false,
     width: 150,
     valueGetter: (params) =>
-      `${params.row.mobile_no || ''}`,
+      `${params.row.mobilenumber || ''}`,
   },
   {
     field: 'email',
     headerName: 'Email',
     description: 'This column has a value getter and is not sortable.',
     sortable: false,
-    // width: 300,
+    width: 300,
     valueGetter: (params) =>
-      `${params.row.username || ''}`,
+      `${params.row.email || ''}`,
   },
   {
     field: 'actions',
@@ -195,7 +195,7 @@ const CustomerList = ({ isDashboardPage = true }) => {
             <DataGrid
               rows={users}
               columns={columns}
-              getRowId={(row) => row.id}
+              getRowId={(row) => row.userid}
               paginationMode="server"
               initialState={{
                 pagination: { paginationModel: { pageSize:5 } },

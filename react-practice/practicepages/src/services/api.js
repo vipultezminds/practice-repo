@@ -19,7 +19,7 @@ export const api = {
   },
 
   login: (username, password, successCallback, errorCallback) => {
-    return fetch(`https://192.168.1.19:7000/login`, {
+    return axios.post(`${API_BASE_URL}//login`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -49,7 +49,7 @@ export const api = {
       });
   },
   signup: (firstName, lastName, email, password) => {
-    return axios.post(`https://192.168.1.19:7000/signup`, {
+    return axios.post(`${API_BASE_URL}/signup`, {
       firstName: firstName,
       lastName: lastName,
       email: email,
