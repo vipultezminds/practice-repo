@@ -188,12 +188,7 @@ export const api = {
       lastName: lastName,
       email: email,
       password: password,
-    }, {
-      headers: {
-        Authorization: `Bearer ${AUTH_TOKEN}`,
-        "Content-Type": "application/json",
-      },
-    })
+    },)
       .then(response => {
         const data = response.data;
         if (data.errorCode === 0) {
