@@ -38,3 +38,7 @@
 } */
 /* App.css or your custom CSS file */
 @import url('https://fonts.googleapis.com/css?family=Poppins');
+
+.App{
+  background-color: #F7FBFF;
+}

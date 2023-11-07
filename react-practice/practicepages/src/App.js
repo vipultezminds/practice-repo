@@ -5,6 +5,7 @@ import Sidebar from './components/Sidebar/Index';
 import { useTheme } from '@mui/material';
 import { ThemeProvider } from '@mui/material/styles';
 import { commonTheme } from "./theme/index"
+import "./App.css"
 
 function App() {
   const theme = useTheme();

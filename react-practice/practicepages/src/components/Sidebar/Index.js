@@ -40,7 +40,7 @@ const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open' })(
 export default function Sidebar({ open }) {
 
     return (
-        <Box sx={{ display: 'flex' }}>
+        <Box sx={{ display: 'flex', maxWidth: 'lg', margin: 'auto' }}>
             <Drawer
                 sx={{
                     width: drawerWidth,
