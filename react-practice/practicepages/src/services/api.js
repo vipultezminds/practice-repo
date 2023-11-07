@@ -17,31 +17,22 @@ export const api = {
         errorCallback(error);
       });
   },
-
   login: (username, password, successCallback, errorCallback) => {
-    return axios.post(`${API_BASE_URL}//login`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
+    axios
+      .post(`${API_BASE_URL}/login`, {
         email: username,
         password: password,
-      }),
-    })
-      .then(response => {
-        return response.json();
       })
-      .then(data => {
-        console.log(data)
+      .then(response => {
+        const data = response.data;
         if (data.errorCode === 0) {
-          alert(data.message)
+          alert(data.message);
           successCallback(data.token);
           window.location.href = './dashboard';
         } else if (data.errorCode === 1) {
-          alert(data.errorMessage)
+          alert(data.errorMessage);
         } else {
-          alert("Unable to login, Unknown error")
+          alert("Unable to login, Unknown error");
         }
       })
       .catch(error => {
@@ -49,12 +40,13 @@ export const api = {
       });
   },
   signup: (firstName, lastName, email, password) => {
-    return axios.post(`${API_BASE_URL}/signup`, {
-      firstName: firstName,
-      lastName: lastName,
-      email: email,
-      password: password,
-    },)
+    return axios
+      .post(`${API_BASE_URL}/signup`, {
+        firstName: firstName,
+        lastName: lastName,
+        email: email,
+        password: password,
+      },)
       .then(response => {
         const data = response.data;
         if (data.errorCode === 0) {

@@ -31,14 +31,14 @@ const columns = [
     field: 'updated_at',
     headerName: 'Date/Time',
     type: 'number',
-    width: 200,
+    width: 160,
   },
   {
     field: 'fullname',
     headerName: 'Full Name',
     description: 'This column has a value getter and is not sortable.',
     sortable: false,
-    width:300,
+    width:250,
     renderCell: (params) => (
       <Box style={{ display: 'flex', alignItems: 'center' }}>
         <Avatar alt={`${params.row.firstname} ${params.row.lastname}`} src={dpURL} />
@@ -61,7 +61,7 @@ const columns = [
     headerName: 'Email',
     description: 'This column has a value getter and is not sortable.',
     sortable: false,
-    width: 300,
+    width: 200,
     valueGetter: (params) =>
       `${params.row.email || ''}`,
   },
@@ -70,6 +70,7 @@ const columns = [
     headerName: '',
     sortable: false,
     flex:1,
+    // width:150,
 
     renderCell: (params) => (
       <Box marginLeft={'auto'}>
@@ -77,7 +78,6 @@ const columns = [
           aria-label="more"
           id="long-button"
           aria-haspopup="true"
-          sx={{marginLeft:'auto'}}
         >
           <MoreVertIcon />
         </IconButton>
