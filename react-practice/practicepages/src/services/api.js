@@ -63,5 +63,38 @@ export const api = {
         alert(error)
       });
   },
+  getUserDetails: (successCallback, errorCallback) => {
+    axios.get(`${API_BASE_URL}/user`, {
+      headers: {
+        Authorization: `Bearer ${AUTH_TOKEN}`,
+        "Content-Type": "application/json",
+      },
+    })
+      .then(response => {
+        const data = response.data;
+        // console.log(data)
+        successCallback(data);
+      })
+      .catch(error => {
+        errorCallback(error);
+      });
+  },
+
+  updateUserDetails: (userData, successCallback, errorCallback) => {
+    axios.put(`${API_BASE_URL}/user`, userData, {
+      headers: {
+        Authorization: `Bearer ${AUTH_TOKEN}`,
+        "Content-Type": "application/json",
+      },
+    })
+      .then(response => {
+        const data = response.data;
+        successCallback(data);
+      })
+      .catch(error => {
+        errorCallback(error);
+      });
+  },
+
 
 };

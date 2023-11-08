@@ -23,7 +23,6 @@ const options = [
 const columns = [
   {
     field: 'userid', headerName: 'ID',
-    // width: 90,
     valueGetter: (params) =>
       `# ${params.row.userid || ''}`,
   },
@@ -102,15 +101,6 @@ const CustomerList = ({ isDashboardPage = true }) => {
   });
   const [users, setUsers] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
-
-  // const handlePageSizeChange = (pageSize) => {
-  //   console.log('page size change clicked')
-  //   // When the page size is changed, set the page to the first page
-  //   setPaginationModel({
-  //     page: 0,
-  //     pageSize: pageSize,
-  //   });
-  // };
 
   useEffect(() => {
     const fetchData = async () => {
